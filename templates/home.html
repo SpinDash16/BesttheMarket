@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Strategies - S&P Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f5f0;
+            color: #0a0a0f;
+            line-height: 1.6;
+        }
+
+        header {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #e0dcd8;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0a0a0f;
+        }
+
+        .logo span {
+            color: #b8975a;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #0a0a0f;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #b8975a;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #f8f5f0 0%, #edeae3 100%);
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #0a0a0f;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #7a7870;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .strategies-section {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 42px;
+            margin-bottom: 15px;
+            color: #0a0a0f;
+        }
+
+        .section-header p {
+            font-size: 16px;
+            color: #7a7870;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .strategies-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .strategy-card {
+            background: white;
+            border: 1px solid #e0dcd8;
+            border-radius: 8px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .strategy-card:hover {
+            border-color: #b8975a;
+            box-shadow: 0 10px 40px rgba(184, 151, 90, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .strategy-badge {
+            display: inline-block;
+            background: #b8975a;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+
+        .strategy-card h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #0a0a0f;
+        }
+
+        .strategy-card p {
+            font-size: 14px;
+            color: #7a7870;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .strategy-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: auto;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .strategy-cta {
+            display: inline-block;
+            background: #b8975a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .strategy-cta:hover {
+            background: #9d7f4a;
+        }
+
+        .strategy-cta-secondary {
+            background: white;
+            color: #b8975a;
+            border: 2px solid #b8975a;
+            padding: 8px 18px;
+        }
+
+        .strategy-cta-secondary:hover {
+            background: #f8f5f0;
+        }
+
+        .coming-soon {
+            background: #f0ebe8;
+            border-color: #d4ccc5;
+        }
+
+        .coming-soon .strategy-badge {
+            background: #ccc;
+        }
+
+        .coming-soon .strategy-cta {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .coming-soon .strategy-cta:hover {
+            background: #ccc;
+        }
+
+        footer {
+            background: #0a0a0f;
+            color: #edeae3;
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        footer a {
+            color: #b8975a;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .section-header h2 {
+                font-size: 28px;
+            }
+
+            .strategies-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            nav {
+                gap: 15px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">S&P <span>Analytics</span></div>
+            <nav>
+                <a href="/">Home</a>
+                <a href="#strategies">Strategies</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Data-Driven Investment Strategies</h1>
+            <p>Explore research-backed portfolio strategies backed by 10+ years of historical analysis and backtesting.</p>
+        </div>
+    </section>
+
+    <!-- Strategies Section -->
+    <section class="strategies-section" id="strategies">
+        <div class="container">
+            <div class="section-header">
+                <h2>Available Strategies</h2>
+                <p>Choose a strategy and dive into detailed performance analytics, risk assessment, and allocation breakdowns.</p>
+            </div>
+
+            <div class="strategies-grid" id="strategies-grid">
+                <!-- Strategy cards will be populated here by JavaScript -->
+                <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
+                    <p>Loading strategies...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 S&P Analytics. All rights reserved.</p>
+            <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                Disclaimer: This analysis is for informational purposes only and not investment advice.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Fetch and render strategy cards
+        async function loadStrategies() {
+            try {
+                const response = await fetch('/api/strategies');
+                const strategies = await response.json();
+
+                const grid = document.getElementById('strategies-grid');
+                grid.innerHTML = '';
+
+                if (strategies.length === 0) {
+                    grid.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><p>No strategies available yet.</p></div>';
+                    return;
+                }
+
+                strategies.forEach(strategy => {
+                    const card = document.createElement('div');
+                    card.className = `strategy-card ${!strategy.is_active ? 'coming-soon' : ''}`;
+
+                    card.innerHTML = `
+                        <div class="strategy-badge">${strategy.is_active ? 'Active' : 'Coming Soon'}</div>
+                        <h3>${strategy.name}</h3>
+                        <p>${strategy.description || 'Detailed strategy analysis and performance metrics.'}</p>
+                        <div class="strategy-buttons">
+                            <a href="${strategy.landing_page}" class="strategy-cta">${strategy.is_active ? 'Explore Strategy' : 'Coming Soon'}</a>
+                            ${strategy.is_active ? `<a href="/subscribe" class="strategy-cta strategy-cta-secondary">Subscribe Now</a>` : ''}
+                        </div>
+                    `;
+
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading strategies:', error);
+                document.getElementById('strategies-grid').innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><p>Error loading strategies. Please try again later.</p></div>';
+            }
+        }
+
+        // Load strategies on page load
+        document.addEventListener('DOMContentLoaded', loadStrategies);
+    </script>
+</body>
+</html>

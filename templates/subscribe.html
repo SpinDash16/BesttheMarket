@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>S&P 3 Weekly — The Top 3 S&P 500 Stocks. Every Friday.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#0a0a0f;--paper:#f5f3ee;--cream:#edeae3;
+  --gold:#c9a84c;--muted:#7a7870;--border:rgba(10,10,15,0.12);
+}
+body{background:var(--paper);font-family:'Syne',sans-serif;color:var(--ink);}
+.ticker-tape{background:var(--ink);color:var(--gold);font-family:'DM Mono',monospace;font-size:11px;padding:7px 0;white-space:nowrap;overflow:hidden;letter-spacing:0.05em;}
+.ticker-inner{display:inline-block;animation:ticker 28s linear infinite;}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* NAV */
+nav{background:var(--ink);padding:14px 40px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#f5f3ee;letter-spacing:-0.02em;}
+.nav-logo span{color:var(--gold);}
+.nav-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;}
+
+/* HERO */
+.hero{max-width:680px;margin:0 auto;padding:72px 24px 56px;text-align:center;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:20px;}
+.hero h1{font-size:clamp(40px,7vw,72px);font-weight:800;letter-spacing:-0.03em;line-height:1;margin-bottom:20px;}
+.hero h1 em{color:var(--gold);font-style:normal;}
+.hero-sub{font-family:'DM Mono',monospace;font-size:14px;color:var(--muted);line-height:1.65;max-width:480px;margin:0 auto 40px;}
+
+/* FORM */
+.form-wrap{background:white;border:1px solid var(--border);padding:32px;max-width:440px;margin:0 auto 16px;}
+.form-row{margin-bottom:14px;}
+.form-row label{display:block;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;}
+.form-row input{width:100%;font-family:'DM Mono',monospace;font-size:14px;border:1px solid var(--border);background:var(--paper);padding:10px 14px;color:var(--ink);outline:none;}
+.form-row input:focus{border-color:var(--gold);}
+.btn-subscribe{width:100%;background:var(--ink);color:var(--gold);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;padding:14px;border:none;cursor:pointer;transition:background 0.15s;}
+.btn-subscribe:hover{background:#1a1a2a;}
+.form-disclaimer{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center;margin-top:10px;max-width:440px;margin-left:auto;margin-right:auto;}
+#form-message{font-family:'DM Mono',monospace;font-size:12px;text-align:center;margin-top:12px;padding:10px;display:none;}
+#form-message.success{background:#e8f5e9;color:#1a6b3c;border:1px solid #a5d6a7;}
+#form-message.error{background:#fce4e4;color:#b71c1c;border:1px solid #ef9a9a;}
+
+/* BULLETS */
+.bullets{max-width:480px;margin:48px auto;text-align:left;}
+.bullets h2{font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-bottom:20px;}
+.bullet-item{display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;}
+.bullet-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:0.1em;min-width:28px;margin-top:2px;}
+.bullet-text{font-family:'DM Mono',monospace;font-size:13px;color:#3a3830;line-height:1.6;}
+
+/* STRATEGY TABLE */
+.strategy{background:var(--ink);padding:48px 24px;}
+.strategy-inner{max-width:600px;margin:0 auto;}
+.strategy h2{font-size:26px;font-weight:800;color:#f5f3ee;letter-spacing:-0.02em;margin-bottom:24px;}
+.strategy h2 em{color:var(--gold);font-style:normal;}
+.strategy-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:12px;}
+.strategy-table th{text-align:left;color:var(--muted);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 12px;border-bottom:1px solid #222;}
+.strategy-table td{padding:10px 12px;color:#f5f3ee;border-bottom:1px solid #1a1a20;}
+.strategy-table tr.highlight td{color:var(--gold);font-weight:500;}
+
+/* SAMPLE PREVIEW */
+.preview-section{max-width:640px;margin:56px auto;padding:0 24px;}
+.preview-section h2{font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-bottom:20px;}
+.preview-wrap{border:1px solid var(--border);overflow:hidden;}
+
+/* FOOTER */
+footer{background:var(--ink);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#f5f3ee;}
+.footer-logo span{color:var(--gold);}
+.footer-copy{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+
+@media(max-width:600px){
+  nav,footer{padding:14px 20px;}
+  .hero{padding:48px 20px 40px;}
+  .form-wrap{padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<div class="ticker-tape">
+  <span class="ticker-inner">S&amp;P 3 WEEKLY &nbsp;·&nbsp; #1 NVDA $4.60T &nbsp;·&nbsp; #2 AAPL $4.02T &nbsp;·&nbsp; #3 GOOGL $3.81T &nbsp;·&nbsp; BUY $100 EACH, EVERY FRIDAY &nbsp;·&nbsp; DCA INTO THE TOP 3 &nbsp;·&nbsp; S&amp;P 3 WEEKLY &nbsp;·&nbsp; #1 NVDA $4.60T &nbsp;·&nbsp; #2 AAPL $4.02T &nbsp;·&nbsp; #3 GOOGL $3.81T &nbsp;·&nbsp; BUY $100 EACH, EVERY FRIDAY &nbsp;·&nbsp; DCA INTO THE TOP 3 &nbsp;·&nbsp;</span>
+</div>
+
+<nav>
+  <a href="/" class="nav-logo" style="text-decoration: none;">S&amp;P <span>3</span> Weekly</a>
+  <div class="nav-badge">FREE NEWSLETTER · EVERY FRIDAY</div>
+  <a href="/" style="font-family: 'DM Mono', monospace; font-size: 11px; color: #7a7870; text-decoration: none; letter-spacing: 0.1em;">← Back to Strategy</a>
+</nav>
+
+<!-- HERO + FORM -->
+<section class="hero">
+  <div class="hero-eyebrow">&#9632; &nbsp; Investment Newsletter &nbsp; &#9632;</div>
+  <h1>The top 3 S&amp;P 500 stocks.<br><em>Every Friday.</em></h1>
+  <p class="hero-sub">The top 3 S&amp;P 500 companies by market cap. $100 each. Every Friday — no research required, no timing, no guessing.</p>
+
+  <div class="form-wrap">
+    <form id="subscribeForm">
+      <div class="form-row">
+        <label>First name (optional)</label>
+        <input type="text" id="nameInput" name="name" placeholder="Derek" />
+      </div>
+      <div class="form-row">
+        <label>Email address *</label>
+        <input type="email" id="emailInput" name="email" placeholder="you@email.com" required />
+      </div>
+      <button type="submit" class="btn-subscribe">Get the S&amp;P 3 Weekly &#8594;</button>
+    </form>
+    <div id="form-message"></div>
+  </div>
+  <p class="form-disclaimer">Free. No spam. Unsubscribe any time. Not financial advice.</p>
+</section>
+
+<!-- BULLETS -->
+<section style="background:var(--cream);padding:48px 24px;">
+  <div class="bullets">
+    <h2>What you'll get every Friday</h2>
+    <div class="bullet-item">
+      <div class="bullet-num">01.</div>
+      <div class="bullet-text"><strong>No research required</strong> — just buy the 3 biggest companies in the S&amp;P 500 by market cap</div>
+    </div>
+    <div class="bullet-item">
+      <div class="bullet-num">02.</div>
+      <div class="bullet-text"><strong>Dollar-cost average weekly</strong> into mega-cap market leaders with $100 per stock</div>
+    </div>
+    <div class="bullet-item">
+      <div class="bullet-num">03.</div>
+      <div class="bullet-text"><strong>Beat the index</strong> — S&amp;P 3 outperformed S&amp;P 500 index DCA from 2011–2026 in backtesting</div>
+    </div>
+    <div class="bullet-item">
+      <div class="bullet-num">04.</div>
+      <div class="bullet-text"><strong>Watchlist included</strong> — see which companies are approaching the top 3 and might rotate in</div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGY COMPARISON TABLE -->
+<section class="strategy">
+  <div class="strategy-inner">
+    <h2>Why the <em>S&amp;P 3</em> strategy?</h2>
+    <table class="strategy-table">
+      <thead>
+        <tr>
+          <th>Strategy</th>
+          <th>Description</th>
+          <th>2011–2026 Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td>S&amp;P 3 ✓</td>
+          <td>$100/wk each into top 3</td>
+          <td>Best risk/reward</td>
+        </tr>
+        <tr>
+          <td>S&amp;P 1</td>
+          <td>$100/wk into #1 only</td>
+          <td>Strong but volatile</td>
+        </tr>
+        <tr>
+          <td>S&amp;P 5</td>
+          <td>$20/wk into top 5</td>
+          <td>Slightly diluted</td>
+        </tr>
+        <tr>
+          <td>S&amp;P 500</td>
+          <td>$100/wk into index</td>
+          <td>Baseline benchmark</td>
+        </tr>
+        <tr>
+          <td>TQQQ</td>
+          <td>3× leveraged Nasdaq</td>
+          <td>Highest return, near-wipeout risk</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:16px;">Past performance does not guarantee future results. Not financial advice.</p>
+  </div>
+</section>
+
+<!-- CURRENT PICKS PREVIEW -->
+<section style="max-width:640px;margin:56px auto;padding:0 24px;">
+  <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-bottom:20px;">This week's picks</h2>
+  <div id="picks-preview" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);">
+    <div style="background:white;padding:18px;border-left:3px solid #C9A84C;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:#C9A84C;letter-spacing:0.15em;margin-bottom:6px;">#1 BY MARKET CAP</div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-0.02em;">NVDA</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">Nvidia Corp.</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">$4.60T</div>
+    </div>
+    <div style="background:white;padding:18px;border-left:3px solid #8A8078;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:#8A8078;letter-spacing:0.15em;margin-bottom:6px;">#2 BY MARKET CAP</div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-0.02em;">AAPL</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">Apple Inc.</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">$4.02T</div>
+    </div>
+    <div style="background:white;padding:18px;border-left:3px solid #4A4840;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:#4A4840;letter-spacing:0.15em;margin-bottom:6px;">#3 BY MARKET CAP</div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-0.02em;">GOOGL</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">Alphabet Inc.</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">$3.81T</div>
+    </div>
+  </div>
+  <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;">Updated each Friday. Not financial advice.</p>
+</section>
+
+<footer>
+  <div class="footer-logo">S&amp;P <span>3</span> Weekly</div>
+  <div class="footer-copy">&copy; 2026 S&amp;P 3 Weekly &nbsp;·&nbsp; Not financial advice</div>
+</footer>
+
+<script>
+document.getElementById('subscribeForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const email = document.getElementById('emailInput').value.trim();
+  const name = document.getElementById('nameInput').value.trim();
+  const msgEl = document.getElementById('form-message');
+  const btn = this.querySelector('.btn-subscribe');
+
+  btn.textContent = 'Subscribing...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name: name || null }),
+    });
+    const data = await res.json();
+    msgEl.style.display = 'block';
+    if (res.ok) {
+      msgEl.className = 'success';
+      msgEl.textContent = data.message;
+      document.getElementById('subscribeForm').reset();
+    } else {
+      msgEl.className = 'error';
+      msgEl.textContent = data.detail || 'Something went wrong. Try again.';
+    }
+  } catch (err) {
+    msgEl.style.display = 'block';
+    msgEl.className = 'error';
+    msgEl.textContent = 'Network error. Please try again.';
+  } finally {
+    btn.textContent = 'Get the S&P 3 Weekly →';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sp3-postgres
+    environment:
+      POSTGRES_DB: sp3_db
+      POSTGRES_USER: sp3_user
+      POSTGRES_PASSWORD: sp3_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sp3_user -d sp3_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: sp3-app
+    environment:
+      DATABASE_URL: postgresql://sp3_user:sp3_password@postgres:5432/sp3_db
+      RESEND_API_KEY: ${RESEND_API_KEY:-test_key}
+      FROM_EMAIL: ${FROM_EMAIL:-sp3weekly@example.com}
+      REPLY_TO: ${REPLY_TO:-support@example.com}
+      ADMIN_SECRET: ${ADMIN_SECRET:-test_secret_min_32_characters}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ENVIRONMENT: development
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app
+      - ./templates:/app/templates
+      - ./static:/app/static
+    command: >
+      sh -c "python -m alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8082 --reload"
+
+volumes:
+  postgres_data:

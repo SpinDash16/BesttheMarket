@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="format-detection" content="telephone=no" />
+<title>S&P 3 Weekly — {{ week_date }}</title>
+</head>
+<body style="margin:0;padding:0;background:#EDEAE3;font-family:Georgia,'Times New Roman',serif;-webkit-font-smoothing:antialiased;">
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#EDEAE3;">
+<tr><td align="center" style="padding:32px 16px;">
+
+<table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+  <!-- TICKER TAPE -->
+  <tr><td style="background:#0A0A0F;padding:8px 0;overflow:hidden;white-space:nowrap;">
+    <span style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#C9A84C;letter-spacing:0.08em;display:inline-block;">
+      &nbsp;S&amp;P 3 WEEKLY &nbsp;·&nbsp; {{ ticker_line }} &nbsp;·&nbsp; BUY EVERY FRIDAY &nbsp;·&nbsp; ${{ contribution_per_stock }} PER STOCK &nbsp;·&nbsp; S&amp;P 3 WEEKLY &nbsp;·&nbsp; {{ ticker_line }} &nbsp;·&nbsp;
+    </span>
+  </td></tr>
+
+  <!-- MASTHEAD -->
+  <tr><td style="background:#0A0A0F;padding:28px 32px 24px;border-bottom:2px solid #C9A84C;">
+    <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#C9A84C;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;">&#9632; &nbsp; The Weekly Brief &nbsp; &#9632;</div>
+    <div style="font-family:Georgia,serif;font-size:42px;font-weight:bold;color:#F5F3EE;letter-spacing:-0.02em;line-height:1;margin-bottom:6px;">S&amp;P <span style="color:#C9A84C;">3</span><br>WEEKLY</div>
+    <div style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#7A7870;letter-spacing:0.05em;margin-top:8px;">Top 3 S&amp;P 500 companies by market cap — buy ${{ contribution_per_stock }} each, every Friday</div>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
+      <tr>
+        <td><div style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#C9A84C;letter-spacing:0.1em;text-transform:uppercase;">Week of {{ week_date }}</div></td>
+        <td align="right"><div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#444;">Issue No. {{ "%03d"|format(issue_number) }}</div></td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- GOLD RULE -->
+  <tr><td style="height:2px;background:#C9A84C;"></td></tr>
+
+  <!-- SECTION LABEL -->
+  <tr><td style="background:#C9A84C;padding:6px 32px;">
+    <span style="font-family:'Courier New',Courier,monospace;font-size:10px;font-weight:bold;color:#0A0A0F;letter-spacing:0.18em;text-transform:uppercase;">&#9632; &nbsp; This Week's Picks &nbsp; &#9632;</span>
+  </td></tr>
+
+  <!-- LEAD DECK -->
+  <tr><td style="background:#F5F3EE;padding:20px 32px 16px;border-bottom:1px solid #D5D0C8;">
+    <p style="font-family:Georgia,serif;font-size:15px;color:#2A2820;line-height:1.65;margin:0;">
+      Three companies. ${{ contribution_per_stock }} each. Every Friday — no exceptions.
+      This week the top of the S&amp;P 500 holds {% for p in picks %}{% if not loop.first %}{% if loop.last %} and {% else %}, {% endif %}{% endif %}<strong style="color:#0A0A0F;">{{ p.ticker }}</strong>{% endfor %} — here's where to put your money.
+    </p>
+  </td></tr>
+
+  <!-- PICKS -->
+  {% for pick in picks %}
+  {% set border_color = "#C9A84C" if pick.rank == 1 else ("#8A8078" if pick.rank == 2 else "#4A4840") %}
+  {% set rank_color = "#C9A84C" if pick.rank == 1 else ("#8A8078" if pick.rank == 2 else "#4A4840") %}
+  {% set rank_label = "Pick of the Week" if pick.rank == 1 else ("Runner Up" if pick.rank == 2 else "Third Position") %}
+
+  {% if pick.rank == 1 %}
+  <tr><td style="background:#F5F3EE;padding:16px 32px 4px;">
+    <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#7A7870;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px;">{{ rank_label }}</div>
+  </td></tr>
+  {% endif %}
+
+  <tr><td style="background:#FFFFFF;margin-bottom:2px;">
+    <div style="padding:20px 32px;border-left:4px solid {{ border_color }};">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:10px;">
+        <tr>
+          <td width="60%" valign="top">
+            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:{{ rank_color }};letter-spacing:0.18em;text-transform:uppercase;margin-bottom:4px;">&#9632; Rank #{{ pick.rank }} by market cap</div>
+            <div style="font-family:Georgia,serif;font-size:32px;font-weight:bold;color:#0A0A0F;letter-spacing:-0.02em;line-height:1;">{{ pick.ticker }}</div>
+            <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#7A7870;margin-top:3px;letter-spacing:0.04em;">{{ pick.name }}</div>
+            <div style="display:inline-block;background:#EDEAE3;padding:2px 7px;font-family:'Courier New',Courier,monospace;font-size:9px;color:#7A7870;letter-spacing:0.08em;margin-top:6px;">{{ pick.sector }}</div>
+          </td>
+          <td valign="top" align="right">
+            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#7A7870;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Market Cap</div>
+            <div style="font-family:Georgia,serif;font-size:22px;font-weight:bold;color:#0A0A0F;line-height:1;">{{ pick.market_cap_display }}</div>
+            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#7A7870;margin-top:4px;">
+              {% if pick.rank_change == "up" %}▲ Moved up{% elif pick.rank_change == "down" %}▼ Moved down{% else %}— Holding #{{ pick.rank }}{% endif %}
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div style="height:1px;background:#EDEAE3;margin:12px 0;"></div>
+      <div style="font-family:Georgia,serif;font-size:13px;color:#3A3830;line-height:1.55;font-style:italic;">"{{ pick.thesis }}"</div>
+    </div>
+  </td></tr>
+  {% if not loop.last %}<tr><td style="height:2px;background:#EDEAE3;"></td></tr>{% endif %}
+  {% endfor %}
+
+  <!-- BUY BOX -->
+  <tr><td style="background:#0A0A0F;padding:16px 32px;margin-bottom:2px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td valign="middle">
+          <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#7A7870;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px;">Your weekly buy</div>
+          <div style="font-family:Georgia,serif;font-size:28px;font-weight:bold;color:#C9A84C;line-height:1;">${{ contribution_per_stock }} &times; {{ picks|length }}</div>
+          <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#444;letter-spacing:0.06em;margin-top:4px;">{{ picks|map(attribute='ticker')|join(' · ') }}</div>
+          <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#444;letter-spacing:0.05em;margin-top:8px;">Next buy date: &nbsp;<span style="color:#C9A84C;">FRI, {{ next_friday|upper }}</span></div>
+        </td>
+        <td valign="middle" align="right">
+          <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#7A7870;letter-spacing:0.12em;margin-bottom:2px;">Total deploy</div>
+          <div style="font-family:'Courier New',Courier,monospace;font-size:22px;color:#F5F3EE;letter-spacing:0.04em;">${{ total_weekly_deploy }}</div>
+          <div style="margin-top:8px;">
+            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#7A7870;letter-spacing:0.12em;margin-bottom:2px;">Combined mkt cap</div>
+            <div style="font-family:'Courier New',Courier,monospace;font-size:13px;color:#F5F3EE;letter-spacing:0.04em;">
+              {% set total_cap = picks|sum(attribute='market_cap') %}
+              ${{ "%.2f"|format(total_cap / 1e12) }}T
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- WATCHLIST -->
+  {% if watchlist %}
+  <tr><td style="height:1px;background:#D5D0C8;"></td></tr>
+  <tr><td style="background:#FFFFFF;padding:16px 32px;border-top:1px solid #EDEAE3;">
+    <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#7A7870;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px;">&#9632; &nbsp; On Watch — Approaching Top 3</div>
+    {% for w in watchlist %}
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="padding:7px 0;border-bottom:1px solid #EDEAE3;">
+      <tr>
+        <td width="70"><span style="font-family:Georgia,serif;font-size:14px;font-weight:bold;color:#0A0A0F;">{{ w.ticker }}</span></td>
+        <td><span style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#7A7870;">{{ w.name }}</span></td>
+        <td align="right"><span style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#0A0A0F;">{{ w.market_cap_display }}</span></td>
+        <td align="right" width="100"><span style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#C9A84C;padding-left:8px;">{{ w.note }}</span></td>
+      </tr>
+    </table>
+    {% endfor %}
+  </td></tr>
+  {% endif %}
+
+  <!-- STRATEGY BOX -->
+  <tr><td style="background:#0A0A0F;padding:20px 32px;margin-top:2px;">
+    <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#C9A84C;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">&#9632; &nbsp; The S&amp;P 3 Strategy</div>
+    <div style="font-family:Georgia,serif;font-size:13px;color:#7A7870;line-height:1.65;">
+      Buy <strong style="color:#C9A84C;">${{ contribution_per_stock }} of each of the top 3 S&amp;P 500 companies by market cap</strong>, every Friday, without exception. No timing, no emotion. Just systematic ownership of the market's most dominant companies — dollar-cost averaged weekly. Back-tested from 2011, this strategy has outperformed plain S&amp;P 500 index DCA in every measured window. The picks rarely change. The discipline is the edge.
+    </div>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr><td style="background:#0A0A0F;border-top:1px solid #1A1A20;padding:20px 32px;">
+    <div style="font-family:Georgia,serif;font-size:16px;font-weight:bold;color:#F5F3EE;margin-bottom:10px;">S&amp;P <span style="color:#C9A84C;">3</span> Weekly</div>
+    <div style="margin-bottom:12px;">
+      <a href="{{ unsubscribe_url }}" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#7A7870;letter-spacing:0.08em;margin-right:16px;text-decoration:none;">Unsubscribe</a>
+    </div>
+    <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#333;line-height:1.6;letter-spacing:0.02em;">
+      S&amp;P 3 Weekly is an independent publication. Market cap data sourced weekly from public markets. This newsletter is for informational purposes only and does not constitute financial advice. Past performance of any strategy does not guarantee future results. Always do your own research before making investment decisions.<br><br>
+      &copy; 2026 S&amp;P 3 Weekly &nbsp;·&nbsp; Published every Friday
+    </div>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>

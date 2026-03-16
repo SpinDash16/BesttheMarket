@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>S&P 3 Weekly Picker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #0a0a0f;
+  --paper: #f5f3ee;
+  --gold: #c9a84c;
+  --gold-light: #e8d5a0;
+  --red: #c0392b;
+  --green: #1a6b3c;
+  --muted: #7a7870;
+  --border: rgba(10,10,15,0.12);
+  --card-bg: #ffffff;
+}
+body { background: var(--paper); min-height: 100vh; }
+#sp3app { font-family: 'Syne', sans-serif; background: var(--paper); min-height: 560px; color: var(--ink); max-width: 900px; margin: 0 auto; }
+.ticker-tape { background: var(--ink); color: var(--gold); font-family: 'DM Mono', monospace; font-size: 11px; padding: 6px 0; white-space: nowrap; overflow: hidden; letter-spacing: 0.05em; }
+.ticker-inner { display: inline-block; animation: ticker 28s linear infinite; }
+@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.header { padding: 1.25rem 1.5rem 0.9rem; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.header h1 span { color: var(--gold); }
+.header p { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: 'DM Mono', monospace; }
+.week-badge { background: var(--ink); color: var(--gold); font-family: 'DM Mono', monospace; font-size: 11px; padding: 5px 12px; border-radius: 2px; white-space: nowrap; }
+.controls { padding: 0.85rem 1.5rem; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.contrib-label { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; white-space: nowrap; }
+.contrib-input { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; border: 1px solid var(--border); background: white; padding: 6px 10px; width: 90px; color: var(--ink); border-radius: 2px; outline: none; }
+.contrib-input:focus { border-color: var(--gold); }
+.refresh-note { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); padding: 4px 12px; border: 1px solid var(--border); border-radius: 2px; background: white; }
+.data-stamp { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); padding: 0.45rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
+.picks-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1px; background: var(--border); margin: 1rem 1.5rem 0; border: 1px solid var(--border); }
+.pick-card { background: var(--card-bg); padding: 1.1rem 1.1rem 0.9rem; }
+.pick-rank { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 6px; }
+.pick-ticker { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.pick-name { font-size: 11px; color: var(--muted); margin-top: 3px; margin-bottom: 10px; line-height: 1.3; min-height: 26px; }
+.pick-mcap { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; }
+.pick-mcap span { color: var(--muted); font-size: 10px; }
+.pick-alloc { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+.alloc-amount { font-size: 20px; font-weight: 700; color: var(--green); }
+.alloc-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); }
+.summary-row { display: flex; gap: 1px; background: var(--border); margin: 1px 1.5rem 0; border: 1px solid var(--border); border-top: none; }
+.summary-cell { background: var(--ink); color: var(--gold); flex: 1; padding: 0.65rem 1rem; font-family: 'DM Mono', monospace; }
+.summary-cell .s-label { font-size: 9px; opacity: 0.55; letter-spacing: 0.1em; text-transform: uppercase; }
+.summary-cell .s-val { font-size: 15px; font-weight: 500; margin-top: 2px; }
+.context-box { margin: 1px 1.5rem 1.25rem; border: 1px solid var(--border); border-top: none; background: white; }
+.context-header { padding: 0.5rem 1rem; background: #f0ede6; color: var(--muted); font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+.context-body { padding: 0.85rem 1rem; font-size: 12px; line-height: 1.7; color: #3a3830; }
+.rank-change { font-family: 'DM Mono', monospace; font-size: 10px; margin-top: 3px; }
+.sector-tag { display: inline-block; background: #f0ede6; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 2px; margin-top: 4px; letter-spacing: 0.05em; }
+.footer { padding: 0.75rem 1.5rem; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 0.5rem; }
+@media (max-width: 500px) { .picks-grid { grid-template-columns: 1fr; } .summary-row { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div id="sp3app">
+  <div class="ticker-tape">
+    <span class="ticker-inner">S&amp;P 3 WEEKLY &nbsp;·&nbsp; BUY TOP 3 BY MARKET CAP &nbsp;·&nbsp; DOLLAR COST AVERAGE EVERY WEEK &nbsp;·&nbsp; DATA: MAR 13 2026 &nbsp;·&nbsp; #1 NVDA &nbsp;·&nbsp; #2 AAPL &nbsp;·&nbsp; #3 GOOGL &nbsp;·&nbsp; S&amp;P 3 WEEKLY &nbsp;·&nbsp; BUY TOP 3 BY MARKET CAP &nbsp;·&nbsp; DOLLAR COST AVERAGE EVERY WEEK &nbsp;·&nbsp; DATA: MAR 13 2026 &nbsp;·&nbsp; #1 NVDA &nbsp;·&nbsp; #2 AAPL &nbsp;·&nbsp; #3 GOOGL &nbsp;·&nbsp;</span>
+  </div>
+
+  <div class="header">
+    <div>
+      <h1>S&amp;P <span>3</span> WEEKLY</h1>
+      <p>Top 3 S&amp;P 500 companies by market cap — buy every week</p>
+    </div>
+    <div class="week-badge" id="weekBadge">—</div>
+  </div>
+
+  <div class="controls">
+    <span class="contrib-label">$ per stock</span>
+    <input class="contrib-input" type="number" id="contribInput" value="100" min="1" oninput="updateAllocs()" />
+    <span class="refresh-note">Update picks in Claude each Friday ↗</span>
+  </div>
+
+  <div class="data-stamp">
+    <span class="live-dot"></span>
+    Data as of Fri Mar 13, 2026 (most recent market close) · prices indicative · not financial advice
+  </div>
+
+  <div class="picks-grid" id="picksGrid"></div>
+  <div class="summary-row" id="summaryRow"></div>
+  <div class="context-box">
+    <div class="context-header">&#9632; Market Context — Week of Mar 14</div>
+    <div class="context-body" id="contextBody"></div>
+  </div>
+
+  <div class="footer">SP3 Weekly · Data sourced manually each Friday · Not financial advice · Update picks weekly by checking top S&amp;P 500 market caps</div>
+</div>
+
+<script>
+const picks = [
+  {
+    rank: 1,
+    ticker: "NVDA",
+    name: "Nvidia Corporation",
+    marketCap: "4.60T",
+    marketCapRaw: 4600000000000,
+    sector: "Semiconductors",
+    note: "First company ever to cross $4T — AI GPU demand remains relentless",
+    rankChange: "▲ Overtook AAPL in late 2024"
+  },
+  {
+    rank: 2,
+    ticker: "AAPL",
+    name: "Apple Inc.",
+    marketCap: "4.02T",
+    marketCapRaw: 4020000000000,
+    sector: "Consumer Electronics",
+    note: "Services revenue & Apple Intelligence rollout sustaining valuation",
+    rankChange: "— Holding #2"
+  },
+  {
+    rank: 3,
+    ticker: "GOOGL",
+    name: "Alphabet Inc.",
+    marketCap: "3.81T",
+    marketCapRaw: 3810000000000,
+    sector: "Internet / AI",
+    note: "Gemini AI suite + Search dominance; edged out MSFT for #3",
+    rankChange: "▲ Overtook MSFT recently"
+  }
+];
+
+const context = "Nvidia holds the #1 spot after becoming the first company to surpass a $4 trillion market cap on the back of surging AI infrastructure demand. Apple maintains #2 despite softening iPhone sales, supported by its high-margin services segment and Apple Intelligence rollout. Alphabet climbed to #3, narrowly edging out Microsoft ($3.52T) as Gemini AI gains traction in cloud and search. Microsoft remains the closest challenger — the ranking between #3 and #4 could flip any given week.";
+
+const now = new Date();
+
+function nextFriday() {
+  const d = new Date();
+  const diff = (5 - d.getDay() + 7) % 7 || 7;
+  d.setDate(d.getDate() + diff);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+}
+
+document.getElementById('weekBadge').textContent = 'WEEK OF ' + now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+document.getElementById('contextBody').textContent = context;
+
+function updateAllocs() {
+  const contrib = parseFloat(document.getElementById('contribInput').value) || 100;
+  document.querySelectorAll('.alloc-amount').forEach(el => {
+    el.textContent = '$' + Number(contrib).toLocaleString();
+  });
+  const totalEl = document.querySelector('.total-val');
+  if (totalEl) totalEl.textContent = '$' + (contrib * 3).toLocaleString();
+}
+
+function renderPicks() {
+  const contrib = parseFloat(document.getElementById('contribInput').value) || 100;
+  document.getElementById('picksGrid').innerHTML = picks.map(p => `
+    <div class="pick-card">
+      <div class="pick-rank">#${p.rank} BY MARKET CAP</div>
+      <div class="pick-ticker">${p.ticker}</div>
+      <div class="pick-name">${p.name}</div>
+      <span class="sector-tag">${p.sector}</span>
+      <div class="pick-mcap" style="margin-top:8px;">$${p.marketCap} <span>MKTCAP</span></div>
+      <div class="rank-change" style="color:var(--muted);">${p.rankChange}</div>
+      <div class="pick-alloc">
+        <div>
+          <div class="alloc-amount">$${Number(contrib).toLocaleString()}</div>
+          <div class="alloc-label">BUY THIS WEEK</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const combined = picks.reduce((s, p) => s + p.marketCapRaw, 0);
+  const combinedStr = (combined / 1e12).toFixed(2) + 'T';
+  document.getElementById('summaryRow').innerHTML = `
+    <div class="summary-cell">
+      <div class="s-label">Total Deploy</div>
+      <div class="s-val total-val">$${(contrib * 3).toLocaleString()}</div>
+    </div>
+    <div class="summary-cell">
+      <div class="s-label">Combined Mkt Cap</div>
+      <div class="s-val">$${combinedStr}</div>
+    </div>
+    <div class="summary-cell">
+      <div class="s-label">Next Buy Date</div>
+      <div class="s-val">${nextFriday()}</div>
+    </div>
+    <div class="summary-cell">
+      <div class="s-label">Watch for #4</div>
+      <div class="s-val">MSFT $3.52T</div>
+    </div>
+  `;
+}
+
+renderPicks();
+</script>
+</body>
+</html>

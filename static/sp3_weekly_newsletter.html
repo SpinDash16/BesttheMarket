@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="format-detection" content="telephone=no" />
+<title>S&P 3 Weekly — Week of Mar 14, 2026</title>
+<style>
+  /* Reset */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { margin: 0; padding: 0; background: #EDEAE3; font-family: Georgia, 'Times New Roman', serif; -webkit-font-smoothing: antialiased; }
+  table { border-collapse: collapse; mso-table-lspace: 0; mso-table-rspace: 0; }
+  img { border: 0; display: block; }
+  a { text-decoration: none; }
+
+  /* Wrapper */
+  .wrapper { background: #EDEAE3; padding: 32px 16px; }
+  .container { max-width: 600px; margin: 0 auto; }
+
+  /* Header bar */
+  .header-bar { background: #0A0A0F; padding: 10px 32px; display: flex; align-items: center; justify-content: center; }
+  .ticker-text { color: #C9A84C; font-family: 'Courier New', Courier, monospace; font-size: 11px; letter-spacing: 0.08em; white-space: nowrap; }
+
+  /* Masthead */
+  .masthead { background: #0A0A0F; padding: 28px 32px 24px; border-bottom: 2px solid #C9A84C; text-align: center; }
+  .masthead-eyebrow { font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #C9A84C; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+  .masthead-title { font-family: Georgia, serif; font-size: 42px; font-weight: bold; color: #F5F3EE; letter-spacing: -0.02em; line-height: 1; margin-bottom: 6px; }
+  .masthead-title span { color: #C9A84C; font-size: 42px; position: relative; top: -0.15em; }
+  .masthead-sub { font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #F5F3EE; letter-spacing: 0.05em; margin-top: 8px; }
+  .masthead-meta { margin-top: 16px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .masthead-date { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #C9A84C; letter-spacing: 0.1em; text-transform: uppercase; }
+  .masthead-issue { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #F5F3EE; letter-spacing: 0.08em; }
+
+  /* Section label */
+  .section-label { background: #C9A84C; padding: 6px 32px; display: flex; align-items: center; justify-content: center; }
+  .section-label span { font-family: 'Courier New', Courier, monospace; font-size: 10px; font-weight: bold; color: #0A0A0F; letter-spacing: 0.18em; text-transform: uppercase; position: relative; top: -1px; }
+
+  /* Lead deck */
+  .lead-deck { background: #F5F3EE; padding: 20px 32px 16px; border-bottom: 1px solid #D5D0C8; }
+  .lead-deck p { font-family: Georgia, serif; font-size: 15px; color: #2A2820; line-height: 1.65; }
+  .lead-deck strong { color: #0A0A0F; }
+
+  /* Picks section */
+  .picks-header { background: #F5F3EE; padding: 20px 32px 8px; }
+  .picks-header-label { font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #7A7870; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
+  .picks-header-title { font-family: Georgia, serif; font-size: 22px; font-weight: bold; color: #0A0A0F; letter-spacing: -0.01em; }
+
+  /* Individual pick card */
+  .pick-row { background: #FFFFFF; margin: 0 0 2px 0; }
+  .pick-inner { padding: 20px 32px; border-left: 4px solid #C9A84C; }
+  .pick-inner.rank2 { border-left-color: #8A8078; }
+  .pick-inner.rank3 { border-left-color: #4A4840; }
+  .pick-top { display: table; width: 100%; margin-bottom: 10px; }
+  .pick-left { display: table-cell; vertical-align: top; width: 60%; }
+  .pick-right { display: table-cell; vertical-align: top; text-align: right; }
+  .pick-rank-tag { font-family: 'Courier New', Courier, monospace; font-size: 9px; color: #C9A84C; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 4px; }
+  .pick-rank-tag.rank2 { color: #8A8078; }
+  .pick-rank-tag.rank3 { color: #4A4840; }
+  .pick-ticker { font-family: Georgia, serif; font-size: 32px; font-weight: bold; color: #0A0A0F; letter-spacing: -0.02em; line-height: 1; }
+  .pick-name { font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #7A7870; margin-top: 3px; letter-spacing: 0.04em; }
+  .pick-sector { display: inline-block; background: #EDEAE3; padding: 2px 7px; font-family: 'Courier New', Courier, monospace; font-size: 9px; color: #7A7870; letter-spacing: 0.08em; margin-top: 6px; }
+  .pick-mcap-label { font-family: 'Courier New', Courier, monospace; font-size: 9px; color: #7A7870; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
+  .pick-mcap-val { font-family: Georgia, serif; font-size: 22px; font-weight: bold; color: #0A0A0F; line-height: 1; }
+  .pick-rank-note { font-family: 'Courier New', Courier, monospace; font-size: 9px; color: #7A7870; margin-top: 4px; }
+  .pick-divider { height: 1px; background: #EDEAE3; margin: 12px 0; }
+  .pick-note { font-family: Georgia, serif; font-size: 13px; color: #3A3830; line-height: 1.55; font-style: italic; }
+
+  /* Buy box */
+  .buy-box { background: #0A0A0F; padding: 16px 32px; margin-bottom: 2px; }
+  .buy-box-inner { display: table; width: 100%; }
+  .buy-col { display: table-cell; vertical-align: middle; }
+  .buy-col.right { text-align: right; }
+  .buy-label { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #F5F3EE; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
+  .buy-amount { font-family: Georgia, serif; font-size: 28px; font-weight: bold; color: #C9A84C; line-height: 1; }
+  .buy-sub { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #F5F3EE; letter-spacing: 0.06em; margin-top: 4px; }
+  .buy-total-label { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #F5F3EE; letter-spacing: 0.12em; margin-bottom: 2px; }
+  .buy-total { font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #F5F3EE; letter-spacing: 0.04em; }
+  .buy-next { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #F5F3EE; margin-top: 6px; letter-spacing: 0.05em; }
+
+  /* Market context */
+  .context-section { background: #F5F3EE; padding: 20px 32px; border-top: 1px solid #D5D0C8; }
+  .context-label { font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #7A7870; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; }
+  .context-headline { font-family: Georgia, serif; font-size: 17px; font-weight: bold; color: #0A0A0F; margin-bottom: 10px; line-height: 1.3; }
+  .context-body { font-family: Georgia, serif; font-size: 14px; color: #3A3830; line-height: 1.7; }
+
+  /* Watch list */
+  .watchlist { background: #FFFFFF; padding: 16px 32px; border-top: 1px solid #EDEAE3; }
+  .watchlist-label { font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #7A7870; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; }
+  .watchlist-row { display: table; width: 100%; padding: 7px 0; border-bottom: 1px solid #EDEAE3; }
+  .watchlist-row:last-child { border-bottom: none; }
+  .wl-ticker { display: table-cell; font-family: Georgia, serif; font-size: 14px; font-weight: bold; color: #0A0A0F; width: 70px; }
+  .wl-name { display: table-cell; font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #7A7870; vertical-align: middle; }
+  .wl-mcap { display: table-cell; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #0A0A0F; text-align: right; vertical-align: middle; }
+  .wl-note { display: table-cell; font-family: 'Courier New', Courier, monospace; font-size: 9px; color: #C9A84C; text-align: right; vertical-align: middle; padding-left: 8px; }
+
+  /* Strategy box */
+  .strategy-box { background: #0A0A0F; padding: 20px 32px; margin-top: 2px; }
+  .strategy-label { font-family: 'Courier New', Courier, monospace; font-size: 9px; color: #C9A84C; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+  .strategy-text { font-family: Georgia, serif; font-size: 14px; color: #F5F3EE; line-height: 1.65; }
+  .strategy-text strong { color: #C9A84C; }
+
+  /* Footer */
+  .footer { background: #0A0A0F; border-top: 1px solid #1A1A20; padding: 20px 32px; }
+  .footer-logo { font-family: Georgia, serif; font-size: 16px; font-weight: bold; color: #F5F3EE; margin-bottom: 10px; }
+  .footer-logo span { color: #C9A84C; }
+  .footer-links { margin-bottom: 12px; }
+  .footer-links a { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #F5F3EE; letter-spacing: 0.08em; margin-right: 16px; }
+  .footer-fine { font-family: 'Courier New', Courier, monospace; font-size: 10px; color: #AAAAAA; line-height: 1.6; letter-spacing: 0.02em; }
+
+  /* Horizontal rule */
+  .hr { height: 2px; background: #C9A84C; margin: 0; }
+  .hr-thin { height: 1px; background: #D5D0C8; margin: 0; }
+
+  /* Mobile */
+  @media only screen and (max-width: 480px) {
+    .masthead { padding: 20px; }
+    .masthead-title { font-size: 30px; }
+    .pick-inner { padding: 16px 20px; }
+    .pick-ticker { font-size: 26px; }
+    .pick-mcap-val { font-size: 18px; }
+    .buy-box { padding: 14px 20px; }
+    .buy-amount { font-size: 22px; }
+    .context-section, .watchlist, .strategy-box, .footer { padding: 16px 20px; }
+    .section-label { padding: 6px 20px; }
+    .lead-deck, .picks-header { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+<div class="container">
+
+  <!-- Header bar -->
+  <div class="header-bar">
+    <span class="ticker-text">S&amp;P 3 WEEKLY &nbsp;·&nbsp; #1 NVDA $4.60T &nbsp;·&nbsp; #2 AAPL $4.02T &nbsp;·&nbsp; #3 GOOGL $3.81T</span>
+  </div>
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="masthead-eyebrow">&#9632; &nbsp; The Weekly Brief &nbsp; &#9632;</div>
+    <div class="masthead-title">S&amp;P <span>3</span><br>WEEKLY</div>
+    <div class="masthead-sub">Top 3 S&amp;P 500 companies by market cap — buy $100 each, every Friday</div>
+    <div style="margin-top:16px; display:table; width:100%;">
+      <div style="display:table-cell;">
+        <div class="masthead-date">Week of March 14, 2026</div>
+      </div>
+      <div style="display:table-cell; text-align:right;">
+        <div class="masthead-issue">Issue No. 001</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <!-- Section label -->
+  <div class="section-label">
+    <span>&#9632; &nbsp; This Week's Picks &nbsp; &#9632;</span>
+  </div>
+
+  <!-- Lead deck -->
+  <div class="lead-deck">
+    <p>Three companies. One hundred dollars each. Every Friday — no exceptions. This week the top of the S&amp;P 500 looks familiar: <strong>Nvidia still reigns</strong>, Apple holds firm, and Alphabet quietly nudged Microsoft out of the #3 spot. Here's where to put your money.</p>
+  </div>
+
+  <!-- PICK 1 -->
+  <div class="picks-header" style="padding-bottom:4px; padding-top:16px;">
+    <div class="picks-header-label">Pick of the week</div>
+  </div>
+
+  <div class="pick-row">
+    <div class="pick-inner">
+      <div class="pick-top">
+        <div class="pick-left">
+          <div class="pick-rank-tag">&#9632; Rank #1 by market cap</div>
+          <div class="pick-ticker">NVDA</div>
+          <div class="pick-name">Nvidia Corporation</div>
+          <div class="pick-sector">Semiconductors &nbsp;/&nbsp; AI Infrastructure</div>
+        </div>
+        <div class="pick-right">
+          <div class="pick-mcap-label">Market Cap</div>
+          <div class="pick-mcap-val">$4.60T</div>
+          <div class="pick-rank-note">▲ Overtook AAPL in late 2024</div>
+        </div>
+      </div>
+      <div class="pick-divider"></div>
+      <div class="pick-note">"First company in history to cross a $4 trillion market cap. AI infrastructure spending shows no signs of slowing — hyperscalers are racing to secure H100 and Blackwell GPU allocations through 2027."</div>
+    </div>
+  </div>
+
+  <!-- PICK 2 -->
+  <div class="pick-row" style="margin-top:2px;">
+    <div class="pick-inner rank2">
+      <div class="pick-top">
+        <div class="pick-left">
+          <div class="pick-rank-tag rank2">&#9632; Rank #2 by market cap</div>
+          <div class="pick-ticker">AAPL</div>
+          <div class="pick-name">Apple Inc.</div>
+          <div class="pick-sector">Consumer Electronics &nbsp;/&nbsp; Services</div>
+        </div>
+        <div class="pick-right">
+          <div class="pick-mcap-label">Market Cap</div>
+          <div class="pick-mcap-val">$4.02T</div>
+          <div class="pick-rank-note">— Holding #2 steadily</div>
+        </div>
+      </div>
+      <div class="pick-divider"></div>
+      <div class="pick-note">"Services revenue continues to expand margins while hardware cycles stabilize. Apple Intelligence rollout is still early innings — the installed base of 2B+ devices is the distribution moat."</div>
+    </div>
+  </div>
+
+  <!-- PICK 3 -->
+  <div class="pick-row" style="margin-top:2px;">
+    <div class="pick-inner rank3">
+      <div class="pick-top">
+        <div class="pick-left">
+          <div class="pick-rank-tag rank3">&#9632; Rank #3 by market cap</div>
+          <div class="pick-ticker">GOOGL</div>
+          <div class="pick-name">Alphabet Inc.</div>
+          <div class="pick-sector">Internet &nbsp;/&nbsp; AI &nbsp;/&nbsp; Cloud</div>
+        </div>
+        <div class="pick-right">
+          <div class="pick-mcap-label">Market Cap</div>
+          <div class="pick-mcap-val">$3.81T</div>
+          <div class="pick-rank-note">▲ Edged out MSFT for #3</div>
+        </div>
+      </div>
+      <div class="pick-divider"></div>
+      <div class="pick-note">"Gemini AI integration across Search and Workspace is gaining traction. Google Cloud continues double-digit growth. Alphabet narrowly holds #3 — Microsoft at $3.52T is the closest challenger and worth watching weekly."</div>
+    </div>
+  </div>
+
+  <!-- Buy box -->
+  <div class="buy-box">
+    <div class="buy-box-inner">
+      <div class="buy-col">
+        <div class="buy-label">Your weekly buy</div>
+        <div class="buy-amount">$100 &times; 3</div>
+        <div class="buy-sub">NVDA &nbsp;·&nbsp; AAPL &nbsp;·&nbsp; GOOGL</div>
+        <div class="buy-next" style="margin-top:8px;">Next buy date: &nbsp;<span style="color:#C9A84C;">FRI, MAR 20</span></div>
+      </div>
+      <div class="buy-col right">
+        <div class="buy-total-label">Total deploy</div>
+        <div class="buy-total" style="font-size:22px;">$300</div>
+        <div style="margin-top:8px;">
+          <div class="buy-total-label">Combined mkt cap</div>
+          <div class="buy-total">$12.43T</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Market context -->
+  <div class="context-section">
+    <div class="context-label">&#9632; &nbsp; Market Context</div>
+    <div class="context-headline">The AI trade isn't narrowing — it's deepening</div>
+    <div class="context-body">
+      Nvidia's dominance at the top reflects a structural shift, not a momentum trade. The three companies in this week's basket collectively represent over $12 trillion in market value — roughly 20% of the entire S&P 500. <br><br>
+      The #3/#4 race between Alphabet and Microsoft is the most interesting dynamic right now. Both are neck-and-neck in AI cloud infrastructure, and that ranking could flip any given week. If Microsoft ($3.52T) overtakes Alphabet, it moves into your basket — that's the one to watch next Friday.
+    </div>
+  </div>
+
+  <div class="hr-thin"></div>
+
+  <!-- Watch list -->
+  <div class="watchlist">
+    <div class="watchlist-label">&#9632; &nbsp; On Watch — Approaching Top 3</div>
+    <div class="watchlist-row">
+      <div class="wl-ticker">MSFT</div>
+      <div class="wl-name">Microsoft Corporation</div>
+      <div class="wl-mcap">$3.52T</div>
+      <div class="wl-note">CLOSEST TO #3 ▲</div>
+    </div>
+    <div class="watchlist-row">
+      <div class="wl-ticker">AMZN</div>
+      <div class="wl-name">Amazon.com Inc.</div>
+      <div class="wl-mcap">$2.42T</div>
+      <div class="wl-note">Watching</div>
+    </div>
+    <div class="watchlist-row">
+      <div class="wl-ticker">META</div>
+      <div class="wl-name">Meta Platforms Inc.</div>
+      <div class="wl-mcap">$1.64T</div>
+      <div class="wl-note">Watching</div>
+    </div>
+  </div>
+
+  <!-- Strategy reminder -->
+  <div class="strategy-box">
+    <div class="strategy-label">&#9632; &nbsp; The S&amp;P 3 Strategy</div>
+    <div class="strategy-text">
+      Buy <strong>$100 of each of the top 3 S&amp;P 500 companies by market cap</strong>, every Friday, without exception. No timing, no emotion. Just systematic ownership of the market's most dominant companies — dollar-cost averaged weekly. Back-tested from 2011, this strategy has outperformed plain S&amp;P 500 index DCA in every measured window. The picks rarely change. The discipline is the edge.
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-logo">S&amp;P <span>3</span> Weekly</div>
+    <div class="footer-links">
+      <a href="#">Unsubscribe</a>
+      <a href="#">Archive</a>
+      <a href="#">Share</a>
+    </div>
+    <div class="footer-fine">
+      S&amp;P 3 Weekly is an independent publication. Market cap data sourced weekly from public markets. This newsletter is for informational purposes only and does not constitute financial advice. Past performance of any strategy does not guarantee future results. Always do your own research before making investment decisions.<br><br>
+      &copy; 2026 S&amp;P 3 Weekly &nbsp;·&nbsp; Published every Friday
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>

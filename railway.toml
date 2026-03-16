@@ -1,0 +1,33 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pip install -r requirements.txt"
+
+[deploy]
+startCommand = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+
+[[variables]]
+name = "RESEND_API_KEY"
+description = "Resend API key for sending emails"
+
+[[variables]]
+name = "FROM_EMAIL"
+description = "Sender email (must be verified in Resend)"
+
+[[variables]]
+name = "REPLY_TO"
+description = "Reply-to email address"
+
+[[variables]]
+name = "ADMIN_SECRET"
+description = "Secret key for admin dashboard access"
+
+[[variables]]
+name = "ADMIN_EMAIL"
+description = "Admin email for previews and alerts"
+
+[[variables]]
+name = "DATABASE_URL"
+description = "PostgreSQL URL (auto-set by Railway Postgres plugin)"
