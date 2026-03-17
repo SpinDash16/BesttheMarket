@@ -305,29 +305,27 @@ def _fetch_with_yfinance(tickers: list[str], start_date: date, end_date: date) -
     return prices
 
 
-def _fetch_with_investpy(tickers: list[str], start_date: date, end_date: date) -> pd.DataFrame:
+def _fetch_with_pandas_datareader(tickers: list[str], start_date: date, end_date: date) -> pd.DataFrame:
     """
-    Fallback function to fetch prices from investpy library.
-    Uses a different data source (Investing.com) than yfinance.
+    Fallback function to fetch prices using pandas_datareader.
+    Uses multiple data sources (Yahoo via pandas, more robust than direct yfinance).
     """
     try:
-        import investpy
+        import pandas_datareader as pdr
     except ImportError:
-        logger.error("investpy not installed, cannot use fallback data source")
+        logger.error("pandas_datareader not installed")
         raise
 
-    logger.info(f"Fetching {len(tickers)} tickers from investpy (fallback)...")
+    logger.info(f"Fetching {len(tickers)} tickers from pandas_datareader (fallback)...")
 
     all_prices = {}
     for ticker in tickers:
         try:
-            # investpy requires stock name, not ticker in some cases
-            # Try ticker first, then fallback to common search
-            data = investpy.stocks.get_stock_historical_data(
-                stock=ticker,
-                country="united states",
-                from_date=start_date.strftime("%d/%m/%Y"),
-                to_date=end_date.strftime("%d/%m/%Y"),
+            # pandas_datareader Yahoo backend
+            data = pdr.data.get_data_yahoo(
+                ticker,
+                start=start_date,
+                end=end_date,
             )
             # Convert to weekly
             data_weekly = data['Close'].resample('W').last()
@@ -338,12 +336,12 @@ def _fetch_with_investpy(tickers: list[str], start_date: date, end_date: date) -
             continue
 
     if not all_prices:
-        raise ValueError("Failed to fetch any tickers from investpy")
+        raise ValueError("Failed to fetch any tickers from pandas_datareader")
 
     # Combine into single DataFrame
     prices = pd.DataFrame(all_prices)
     prices = prices.ffill().dropna()
-    logger.info(f"✓ investpy: Fetched {len(prices)} weeks for {len(all_prices)} tickers")
+    logger.info(f"✓ pandas_datareader: Fetched {len(prices)} weeks for {len(all_prices)} tickers")
     return prices
 
 
@@ -351,10 +349,10 @@ def fetch_historical_prices(
     tickers: list[str], start_date: date, end_date: date
 ) -> pd.DataFrame:
     """
-    Fetch historical weekly OHLC prices with fallback strategy.
+    Fetch historical weekly OHLC prices with dual-source strategy.
 
     1. Try yfinance with exponential backoff retries
-    2. Fall back to investpy if yfinance fails
+    2. Fall back to pandas_datareader if yfinance fails
 
     Returns DataFrame with columns like NVDA, AAPL, GOOGL (close prices).
     Index is DatetimeIndex with weekly frequency.
@@ -368,19 +366,19 @@ def fetch_historical_prices(
 
     except Exception as e:
         logger.warning(f"yfinance failed after retries: {str(e)}")
-        logger.info("Attempting fallback data source: investpy")
+        logger.info("Attempting fallback data source: pandas_datareader")
 
         try:
-            prices = _fetch_with_investpy(tickers, start_date, end_date)
-            logger.info(f"✓ investpy fallback successful: {len(prices)} weeks")
+            prices = _fetch_with_pandas_datareader(tickers, start_date, end_date)
+            logger.info(f"✓ pandas_datareader fallback successful: {len(prices)} weeks")
             return prices
 
         except Exception as e2:
-            logger.error(f"investpy fallback also failed: {str(e2)}")
+            logger.error(f"pandas_datareader fallback also failed: {str(e2)}")
             logger.error(f"Original yfinance error: {str(e)}")
             raise ValueError(
-                f"Failed to fetch historical prices from both yfinance and investpy. "
-                f"yfinance: {str(e)[:100]}... investpy: {str(e2)[:100]}..."
+                f"Failed to fetch historical prices from both yfinance and pandas_datareader. "
+                f"yfinance: {str(e)[:100]}... pandas_datareader: {str(e2)[:100]}..."
             )
 
 
