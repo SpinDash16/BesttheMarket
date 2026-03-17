@@ -160,69 +160,15 @@ def get_analytics(db: Session = Depends(lambda: __import__('sqlalchemy.orm', fro
                     .first()
                 )
                 if not snapshot:
-                    # Return fallback/demo data so landing page displays something
-                    logger.warning("Returning fallback demo analytics data")
-
-                    # Generate realistic weekly data points for 10-year chart
-                    from datetime import timedelta
-                    import random
-                    random.seed(42)  # For consistency
-
-                    dates = []
-                    sp3_vals = []
-                    sp500_vals = []
-                    principal_vals = []
-
-                    start_date = datetime(2016, 3, 18)
-                    current = start_date
-
-                    # Generate 520 weeks of data (10 years)
-                    for week in range(520):
-                        dates.append(current.strftime("%Y-%m-%d"))
-
-                        # S&P 3: smooth growth with volatility, ending at 295k
-                        progress = week / 520
-                        base_sp3 = 100000 * (1 + progress * 1.95)
-                        volatility_sp3 = random.gauss(0, base_sp3 * 0.02)
-                        sp3_vals.append(max(50000, base_sp3 + volatility_sp3))
-
-                        # S&P 500: slower growth, ending at 211k
-                        base_sp500 = 100000 * (1 + progress * 1.10)
-                        volatility_sp500 = random.gauss(0, base_sp500 * 0.018)
-                        sp500_vals.append(max(50000, base_sp500 + volatility_sp500))
-
-                        # Principal invested: linear growth ($300/week)
-                        principal = 100000 + (week * 300)
-                        principal_vals.append(principal)
-
-                        current += timedelta(days=7)
-
-                    return AnalyticsResponse(
-                        risk_grade="B",
-                        risk_description="Moderate risk - concentrated exposure to top 3 S&P 500 companies",
-                        sp3_total_return_pct=195.27,
-                        sp3_annualized_return=0.1143,
-                        sp3_max_drawdown=-0.306,
-                        sp3_sharpe_ratio=1.70,
-                        sp3_volatility=0.457,
-                        sp3_position_value=156600,
-                        sp500_total_return_pct=110.12,
-                        sp500_annualized_return=0.0769,
-                        sp500_max_drawdown=-0.308,
-                        sp500_sharpe_ratio=1.70,
-                        sp500_volatility=0.430,
-                        chart_data=ChartData(
-                            dates=dates,
-                            sp3_values=sp3_vals,
-                            sp500_values=sp500_vals,
-                            principal_values=principal_vals
-                        ),
-                        current_allocation=[
-                            AllocationItem(ticker="NVDA", weight=41.6, value=65000, shares=90),
-                            AllocationItem(ticker="MSFT", weight=32.3, value=50500, shares=120),
-                            AllocationItem(ticker="GOOGL", weight=26.1, value=41000, shares=200),
-                        ],
-                        last_updated=datetime.utcnow().isoformat()
+                    # No fallback data available - return transparent error
+                    logger.error("No analytics data available and calculation failed")
+                    return JSONResponse(
+                        status_code=503,
+                        content={
+                            "error": "Analytics data temporarily unavailable",
+                            "message": "We're calculating your historical performance data from real market data. This process takes a few minutes on first run. Please refresh in a moment.",
+                            "hint": "The analytics endpoint is fetching 10 years of historical S&P 500 price data and computing the S&P 3 strategy performance."
+                        }
                     )
                 # Return old data with warning
                 logger.warning("Returning stale analytics snapshot due to calculation failure")

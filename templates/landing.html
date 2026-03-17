@@ -850,9 +850,22 @@
 
             } catch (error) {
                 console.error('Error loading analytics:', error);
-                // Show loading/fallback message
-                document.getElementById('sp3-return').textContent = 'Loading...';
-                document.getElementById('sp500-return').textContent = 'Loading...';
+
+                // Determine user-friendly message based on error
+                let message = 'Calculating analytics...';
+
+                if (error.message && error.message.includes('503')) {
+                    message = 'Computing real market data...';
+                } else if (error instanceof TypeError) {
+                    message = 'Loading analytics (first time may take a moment)...';
+                }
+
+                // Show loading message
+                document.getElementById('sp3-return').textContent = message;
+                document.getElementById('sp500-return').textContent = message;
+
+                // Show helpful note in console
+                console.info('Analytics are being calculated from real market data. Please refresh the page in a moment.');
             }
         }
 
