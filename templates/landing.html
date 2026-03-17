@@ -850,6 +850,9 @@
 
             } catch (error) {
                 console.error('Error loading analytics:', error);
+                // Show loading/fallback message
+                document.getElementById('sp3-return').textContent = 'Loading...';
+                document.getElementById('sp500-return').textContent = 'Loading...';
             }
         }
 
