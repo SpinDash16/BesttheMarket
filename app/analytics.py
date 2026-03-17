@@ -11,6 +11,7 @@ import requests
 import pandas as pd
 import numpy as np
 import yfinance as yf
+from tenacity import retry, stop_after_attempt, wait_exponential
 from sqlalchemy.orm import Session
 
 from .database import AnalyticsSnapshot
@@ -153,10 +154,15 @@ def fetch_sp500_constituents_history() -> dict[date, set[str]]:
         return {}
 
 
+@retry(
+    stop=stop_after_attempt(2),
+    wait=wait_exponential(multiplier=1, min=1, max=5),
+)
 def get_shares_outstanding(ticker: str, date_obj: date) -> float:
     """
     Get shares outstanding for a ticker on a given date.
     Uses yfinance current shares outstanding as approximation.
+    Includes retry logic for cloud environments.
 
     In a more complete implementation, this would pull from SEC filings
     for the most recent quarterly report before the given date.
@@ -168,12 +174,12 @@ def get_shares_outstanding(ticker: str, date_obj: date) -> float:
         if shares:
             return float(shares)
 
-        logger.warning(f"Could not fetch shares outstanding for {ticker}")
+        logger.debug(f"Could not fetch shares outstanding for {ticker}")
         return None
 
     except Exception as e:
         logger.debug(f"Error fetching shares for {ticker}: {e}")
-        return None
+        raise  # Let retry decorator handle it
 
 
 def get_top_3_sp500_on_date(
@@ -269,64 +275,141 @@ def get_top_3_sp500_on_date(
     return top_3
 
 
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=2, max=10),
+)
+def _fetch_with_yfinance(tickers: list[str], start_date: date, end_date: date) -> pd.DataFrame:
+    """
+    Internal function to fetch prices from yfinance with retry logic.
+    Retries up to 3 times with exponential backoff.
+    """
+    logger.info(f"Attempting to fetch {len(tickers)} tickers from yfinance...")
+    data = yf.download(
+        tickers,
+        start=start_date,
+        end=end_date,
+        interval="1wk",
+        progress=False,
+    )
+
+    # For single ticker, yfinance returns different structure
+    if len(tickers) == 1:
+        prices = data[["Close"]].copy()
+        prices.columns = tickers
+    else:
+        prices = data["Close"].copy()
+
+    # Forward fill any missing data
+    prices = prices.ffill().dropna()
+    return prices
+
+
+def _fetch_with_investpy(tickers: list[str], start_date: date, end_date: date) -> pd.DataFrame:
+    """
+    Fallback function to fetch prices from investpy library.
+    Uses a different data source (Investing.com) than yfinance.
+    """
+    try:
+        import investpy
+    except ImportError:
+        logger.error("investpy not installed, cannot use fallback data source")
+        raise
+
+    logger.info(f"Fetching {len(tickers)} tickers from investpy (fallback)...")
+
+    all_prices = {}
+    for ticker in tickers:
+        try:
+            # investpy requires stock name, not ticker in some cases
+            # Try ticker first, then fallback to common search
+            data = investpy.stocks.get_stock_historical_data(
+                stock=ticker,
+                country="united states",
+                from_date=start_date.strftime("%d/%m/%Y"),
+                to_date=end_date.strftime("%d/%m/%Y"),
+            )
+            # Convert to weekly
+            data_weekly = data['Close'].resample('W').last()
+            all_prices[ticker] = data_weekly
+            logger.info(f"  ✓ {ticker}: {len(data_weekly)} weeks")
+        except Exception as e:
+            logger.warning(f"  ✗ {ticker}: {str(e)}")
+            continue
+
+    if not all_prices:
+        raise ValueError("Failed to fetch any tickers from investpy")
+
+    # Combine into single DataFrame
+    prices = pd.DataFrame(all_prices)
+    prices = prices.ffill().dropna()
+    logger.info(f"✓ investpy: Fetched {len(prices)} weeks for {len(all_prices)} tickers")
+    return prices
+
+
 def fetch_historical_prices(
     tickers: list[str], start_date: date, end_date: date
 ) -> pd.DataFrame:
     """
-    Fetch historical weekly OHLC prices from yfinance.
+    Fetch historical weekly OHLC prices with fallback strategy.
+
+    1. Try yfinance with exponential backoff retries
+    2. Fall back to investpy if yfinance fails
 
     Returns DataFrame with columns like NVDA, AAPL, GOOGL (close prices).
     Index is DatetimeIndex with weekly frequency.
     """
+    # Try yfinance first with retries
     try:
-        # Fetch data for all tickers
-        data = yf.download(
-            tickers,
-            start=start_date,
-            end=end_date,
-            interval="1wk",
-            progress=False,
-        )
-
-        # For single ticker, yfinance returns different structure
-        if len(tickers) == 1:
-            prices = data[["Close"]].copy()
-            prices.columns = tickers
-        else:
-            prices = data["Close"].copy()
-
-        # Forward fill any missing data
-        prices = prices.ffill().dropna()
-
-        logger.info(f"Fetched {len(prices)} weeks of price data for {len(tickers)} tickers")
+        logger.info(f"Primary: Fetching {len(tickers)} tickers with yfinance (with retries)...")
+        prices = _fetch_with_yfinance(tickers, start_date, end_date)
+        logger.info(f"✓ yfinance: Fetched {len(prices)} weeks of price data")
         return prices
 
     except Exception as e:
-        logger.error(f"Error fetching historical prices: {e}")
-        raise
+        logger.warning(f"yfinance failed after retries: {str(e)}")
+        logger.info("Attempting fallback data source: investpy")
+
+        try:
+            prices = _fetch_with_investpy(tickers, start_date, end_date)
+            logger.info(f"✓ investpy fallback successful: {len(prices)} weeks")
+            return prices
+
+        except Exception as e2:
+            logger.error(f"investpy fallback also failed: {str(e2)}")
+            logger.error(f"Original yfinance error: {str(e)}")
+            raise ValueError(
+                f"Failed to fetch historical prices from both yfinance and investpy. "
+                f"yfinance: {str(e)[:100]}... investpy: {str(e2)[:100]}..."
+            )
 
 
+@retry(
+    stop=stop_after_attempt(2),
+    wait=wait_exponential(multiplier=1, min=1, max=5),
+)
 def estimate_market_cap(ticker: str, price: float) -> float:
     """
     Estimate market cap for a ticker at a given price.
 
     Uses current shares outstanding from yfinance.info and multiplies by historical price.
     Note: This is an approximation since shares outstanding changes over time (splits, buybacks).
+    Includes retry logic for cloud environments.
     """
     try:
         t = yf.Ticker(ticker)
         shares_outstanding = t.info.get("sharesOutstanding", None)
 
         if shares_outstanding is None:
-            logger.warning(f"Could not fetch shares outstanding for {ticker}")
+            logger.debug(f"Could not fetch shares outstanding for {ticker}")
             return None
 
         market_cap = price * shares_outstanding
         return market_cap
 
     except Exception as e:
-        logger.error(f"Error estimating market cap for {ticker}: {e}")
-        return None
+        logger.debug(f"Error estimating market cap for {ticker}: {e}")
+        raise  # Let retry decorator handle it
 
 
 def get_top_3_by_market_cap(prices_row: pd.Series, date: datetime) -> list[str]:
