@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import json
 from datetime import datetime, date, timedelta
+from pathlib import Path
 from bs4 import BeautifulSoup
 import requests
 
@@ -345,14 +346,45 @@ def _fetch_with_pandas_datareader(tickers: list[str], start_date: date, end_date
     return prices
 
 
+def _load_fixture_data() -> pd.DataFrame:
+    """
+    Load pre-calculated historical fixture data from JSON.
+    Used as final fallback when live data sources fail.
+    """
+    import os
+
+    fixture_path = Path(__file__).parent / "fixtures" / "historical_data.json"
+
+    if not fixture_path.exists():
+        logger.error(f"Fixture file not found at {fixture_path}")
+        return None
+
+    try:
+        with open(fixture_path, 'r') as f:
+            data = json.load(f)
+
+        logger.info(f"✓ Loaded fixture data: {data['metadata']['weeks']} weeks")
+
+        # Create DataFrame from fixture
+        df = pd.DataFrame({
+            'SPY': data['sp500_values'],  # Use SPY as proxy for S&P 500
+        }, index=pd.to_datetime(data['dates']))
+
+        return df
+    except Exception as e:
+        logger.error(f"Failed to load fixture data: {e}")
+        return None
+
+
 def fetch_historical_prices(
     tickers: list[str], start_date: date, end_date: date
 ) -> pd.DataFrame:
     """
-    Fetch historical weekly OHLC prices with dual-source strategy.
+    Fetch historical weekly prices with three-tier fallback strategy.
 
     1. Try yfinance with exponential backoff retries
     2. Fall back to pandas_datareader if yfinance fails
+    3. Fall back to pre-calculated fixture if both live sources fail
 
     Returns DataFrame with columns like NVDA, AAPL, GOOGL (close prices).
     Index is DatetimeIndex with weekly frequency.
@@ -366,7 +398,7 @@ def fetch_historical_prices(
 
     except Exception as e:
         logger.warning(f"yfinance failed after retries: {str(e)}")
-        logger.info("Attempting fallback data source: pandas_datareader")
+        logger.info("Attempting fallback #1: pandas_datareader")
 
         try:
             prices = _fetch_with_pandas_datareader(tickers, start_date, end_date)
@@ -375,10 +407,19 @@ def fetch_historical_prices(
 
         except Exception as e2:
             logger.error(f"pandas_datareader fallback also failed: {str(e2)}")
+            logger.info("Attempting fallback #2: pre-calculated fixture data")
+
+            # Try loading fixture as last resort
+            fixture = _load_fixture_data()
+            if fixture is not None:
+                logger.warning("Using pre-calculated historical fixture (real data from past, not live)")
+                return fixture
+
+            # All sources failed
             logger.error(f"Original yfinance error: {str(e)}")
             raise ValueError(
-                f"Failed to fetch historical prices from both yfinance and pandas_datareader. "
-                f"yfinance: {str(e)[:100]}... pandas_datareader: {str(e2)[:100]}..."
+                f"All data sources failed. yfinance: {str(e)[:100]}... "
+                f"pandas_datareader: {str(e2)[:100]}... fixture: not available"
             )
 
 
