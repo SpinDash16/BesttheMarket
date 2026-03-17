@@ -144,12 +144,28 @@ def get_analytics(db: Session = Depends(lambda: __import__('sqlalchemy.orm', fro
         # If missing or stale, recalculate
         if not snapshot or (date.today() - snapshot.snapshot_date).days > 0:
             logger.info("Analytics snapshot stale or missing, recalculating...")
-            refresh_analytics_snapshot(db)
-            snapshot = (
-                db.query(AnalyticsSnapshot)
-                .order_by(AnalyticsSnapshot.snapshot_date.desc())
-                .first()
-            )
+            try:
+                refresh_analytics_snapshot(db)
+                snapshot = (
+                    db.query(AnalyticsSnapshot)
+                    .order_by(AnalyticsSnapshot.snapshot_date.desc())
+                    .first()
+                )
+            except Exception as e:
+                logger.error(f"Failed to refresh analytics: {str(e)}")
+                # Try to return the last available snapshot even if stale
+                snapshot = (
+                    db.query(AnalyticsSnapshot)
+                    .order_by(AnalyticsSnapshot.snapshot_date.desc())
+                    .first()
+                )
+                if not snapshot:
+                    return JSONResponse(
+                        status_code=503,
+                        content={"error": "Analytics data unavailable. Data will be calculated in the background."}
+                    )
+                # Return old data with warning
+                logger.warning("Returning stale analytics snapshot due to calculation failure")
 
         if not snapshot:
             return JSONResponse(
