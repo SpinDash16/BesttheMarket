@@ -162,25 +162,60 @@ def get_analytics(db: Session = Depends(lambda: __import__('sqlalchemy.orm', fro
                 if not snapshot:
                     # Return fallback/demo data so landing page displays something
                     logger.warning("Returning fallback demo analytics data")
+
+                    # Generate realistic weekly data points for 10-year chart
+                    from datetime import timedelta
+                    import random
+                    random.seed(42)  # For consistency
+
+                    dates = []
+                    sp3_vals = []
+                    sp500_vals = []
+                    principal_vals = []
+
+                    start_date = datetime(2016, 3, 18)
+                    current = start_date
+
+                    # Generate 520 weeks of data (10 years)
+                    for week in range(520):
+                        dates.append(current.strftime("%Y-%m-%d"))
+
+                        # S&P 3: smooth growth with volatility, ending at 295k
+                        progress = week / 520
+                        base_sp3 = 100000 * (1 + progress * 1.95)
+                        volatility_sp3 = random.gauss(0, base_sp3 * 0.02)
+                        sp3_vals.append(max(50000, base_sp3 + volatility_sp3))
+
+                        # S&P 500: slower growth, ending at 211k
+                        base_sp500 = 100000 * (1 + progress * 1.10)
+                        volatility_sp500 = random.gauss(0, base_sp500 * 0.018)
+                        sp500_vals.append(max(50000, base_sp500 + volatility_sp500))
+
+                        # Principal invested: linear growth ($300/week)
+                        principal = 100000 + (week * 300)
+                        principal_vals.append(principal)
+
+                        current += timedelta(days=7)
+
                     return AnalyticsResponse(
                         risk_grade="B",
                         risk_description="Moderate risk - concentrated exposure to top 3 S&P 500 companies",
-                        sp3_total_return_pct=195.27,  # Based on historical backtest
+                        sp3_total_return_pct=195.27,
                         sp3_annualized_return=0.1143,
                         sp3_max_drawdown=-0.306,
                         sp3_sharpe_ratio=1.70,
                         sp3_volatility=0.457,
                         sp3_position_value=156600,
-                        sp500_total_return_pct=110.12,  # Based on historical backtest
+                        sp500_total_return_pct=110.12,
                         sp500_annualized_return=0.0769,
                         sp500_max_drawdown=-0.308,
                         sp500_sharpe_ratio=1.70,
                         sp500_volatility=0.430,
                         chart_data=ChartData(
-                            dates=["2016-03-18", "2026-03-17"],  # 10 year period
-                            sp3_values=[100000, 295270],
-                            sp500_values=[100000, 211120],
-                            principal_values=[100000, 156600]
+                            dates=dates,
+                            sp3_values=sp3_vals,
+                            sp500_values=sp500_vals,
+                            principal_values=principal_vals
                         ),
                         current_allocation=[
                             AllocationItem(ticker="NVDA", weight=41.6, value=65000, shares=90),
