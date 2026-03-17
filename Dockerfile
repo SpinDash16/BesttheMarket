@@ -29,15 +29,11 @@ COPY . .
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
-EXPOSE 8082
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8082/health')" || exit 1
+# Expose port (Railway overrides this with $PORT)
+EXPOSE ${PORT:-8082}
 
 # Run the application with gunicorn
-# Use sh -c to allow environment variable substitution
+# Use sh -c to allow $PORT environment variable substitution (Railway injects this)
 CMD sh -c "gunicorn app.main:app \
      --workers 4 \
      --worker-class uvicorn.workers.UvicornWorker \
