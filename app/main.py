@@ -314,12 +314,6 @@ def get_strategies(db: Session = Depends(lambda: __import__('sqlalchemy.orm', fr
     return strategies
 
 
-@app.get("/sp3subscribe", response_class=HTMLResponse)
-def subscribe_page(request: Request):
-    """Subscription form page."""
-    return templates.TemplateResponse("subscribe.html", {"request": request})
-
-
 @app.get("/", response_class=HTMLResponse)
 def home_page(request: Request):
     """Home page with strategy cards."""

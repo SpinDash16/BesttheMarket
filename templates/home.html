@@ -466,6 +466,126 @@
 
     .card-cta:hover { background: var(--gold-hover); color: #fff; transform: translateY(-1px); }
 
+    /* ── Subscribe Section ────────────────────────────── */
+    .subscribe-section {
+      background: var(--ink);
+      padding: 80px 32px;
+      border-top: 2px solid var(--gold);
+    }
+
+    .subscribe-inner {
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .subscribe-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .subscribe-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .subscribe-title em { font-style: normal; color: var(--gold); }
+
+    .subscribe-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      letter-spacing: 0.02em;
+    }
+
+    .form-wrap {
+      background: var(--paper);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      text-align: left;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    }
+
+    .form-row { margin-bottom: 16px; }
+
+    .form-row label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .form-row input {
+      width: 100%;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 11px 14px;
+      border-radius: var(--radius);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-row input:focus { border-color: var(--gold); }
+
+    .btn-subscribe {
+      width: 100%;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 4px;
+    }
+
+    .btn-subscribe:hover { background: var(--gold-hover); transform: translateY(-1px); }
+    .btn-subscribe:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .form-disclaimer {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.04em;
+      margin-top: 16px;
+    }
+
+    #form-message {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      text-align: center;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      display: none;
+    }
+
+    #form-message.success { background: rgba(26,107,60,0.12); color: #4caf7d; border: 1px solid rgba(26,107,60,0.3); }
+    #form-message.error   { background: rgba(192,57,43,0.1);  color: #e57373; border: 1px solid rgba(192,57,43,0.3); }
+
     /* ── Footer ───────────────────────────────────────── */
     .site-footer {
       background: var(--ink);
@@ -531,7 +651,7 @@
         <span class="logo-text">S&amp;P<em>3</em></span>
         <span class="logo-sub">Weekly</span>
       </div>
-      <a href="/sp3subscribe" class="header-cta">Subscribe Free</a>
+      <a href="#subscribe" class="header-cta">Subscribe Free</a>
     </div>
   </header>
 
@@ -541,7 +661,7 @@
     <h1>The <em>top 3</em> S&amp;P 500 stocks.<br>Every Friday.</h1>
     <p class="hero-sub">$100 per stock · $300/week total · Dollar-cost average into the largest companies by market cap — automatically tracked, every Friday.</p>
     <div class="hero-actions">
-      <a href="/sp3subscribe" class="btn-primary">Get the Free Newsletter</a>
+      <a href="#subscribe" class="btn-primary">Get the Free Newsletter</a>
     </div>
   </section>
 
@@ -651,10 +771,35 @@
             </div>
           </div>
           <p class="card-desc">Invest in the top 3 S&amp;P 500 companies by market cap. $100 per stock, every Friday. Free weekly newsletter with this week's picks — delivered every Friday before market open.</p>
-          <a href="/sp3subscribe" class="card-cta">Subscribe — It's Free</a>
+          <a href="#subscribe" class="card-cta">Subscribe — It's Free</a>
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <!-- Subscribe -->
+  <section id="subscribe" class="subscribe-section">
+    <div class="subscribe-inner">
+      <div class="subscribe-eyebrow">&#9632; &nbsp; Free Newsletter &nbsp; &#9632;</div>
+      <h2 class="subscribe-title">Get the <em>S&amp;P 3</em><br>every Friday.</h2>
+      <p class="subscribe-sub">The top 3 S&amp;P 500 companies by market cap. $100 each. Delivered before market open — no research required.</p>
+
+      <div class="form-wrap">
+        <form id="subscribeForm">
+          <div class="form-row">
+            <label>First name (optional)</label>
+            <input type="text" id="nameInput" name="name" placeholder="Derek" />
+          </div>
+          <div class="form-row">
+            <label>Email address *</label>
+            <input type="email" id="emailInput" name="email" placeholder="you@email.com" required />
+          </div>
+          <button type="submit" class="btn-subscribe">Get the S&amp;P 3 Weekly →</button>
+        </form>
+        <div id="form-message"></div>
+      </div>
+      <p class="form-disclaimer">Free. No spam. Unsubscribe any time. Not financial advice.</p>
     </div>
   </section>
 
@@ -663,7 +808,7 @@
     <div class="footer-inner">
       <div class="footer-logo">S&amp;P<em>3</em> Weekly</div>
       <div class="footer-meta">
-        <div>© 2026 S&amp;P 3 Weekly &nbsp;·&nbsp; <a href="/sp3subscribe">Subscribe</a></div>
+        <div>© 2026 S&amp;P 3 Weekly &nbsp;·&nbsp; <a href="#subscribe">Subscribe</a></div>
         <div>For informational purposes only. Not financial advice.</div>
       </div>
     </div>
@@ -711,6 +856,43 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadStats);
+
+    // ── Subscribe form ──────────────────────────────────
+    document.getElementById('subscribeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email  = document.getElementById('emailInput').value.trim();
+      const name   = document.getElementById('nameInput').value.trim();
+      const msgEl  = document.getElementById('form-message');
+      const btn    = this.querySelector('.btn-subscribe');
+
+      btn.textContent = 'Subscribing...';
+      btn.disabled = true;
+
+      try {
+        const res  = await fetch('/sp3subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name: name || null }),
+        });
+        const data = await res.json();
+        msgEl.style.display = 'block';
+        if (res.ok) {
+          msgEl.className = 'success';
+          msgEl.textContent = data.message;
+          document.getElementById('subscribeForm').reset();
+        } else {
+          msgEl.className = 'error';
+          msgEl.textContent = data.detail || 'Something went wrong. Try again.';
+        }
+      } catch (err) {
+        msgEl.style.display = 'block';
+        msgEl.className = 'error';
+        msgEl.textContent = 'Network error. Please try again.';
+      } finally {
+        btn.textContent = 'Get the S&P 3 Weekly →';
+        btn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
