@@ -314,7 +314,13 @@ def get_strategies(db: Session = Depends(lambda: __import__('sqlalchemy.orm', fr
     return strategies
 
 
+@app.get("/sp3", response_class=HTMLResponse)
+def sp3_page(request: Request):
+    """S&P 3 strategy page with backtest stats and subscribe form."""
+    return templates.TemplateResponse("sp3.html", {"request": request})
+
+
 @app.get("/", response_class=HTMLResponse)
 def home_page(request: Request):
-    """Home page with strategy cards."""
+    """Hub home page — strategy selector."""
     return templates.TemplateResponse("home.html", {"request": request})

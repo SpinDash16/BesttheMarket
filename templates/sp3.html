@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S&P 3 Strategy — S&P 3 Weekly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        #0a0a0f;
+      --ink-light:  #1a1a20;
+      --paper:      #f5f3ee;
+      --cream:      #edeae3;
+      --gold:       #c9a84c;
+      --gold-hover: #9f7f48;
+      --gold-light: rgba(201, 168, 76, 0.14);
+      --muted:      #7a7870;
+      --border:     rgba(10, 10, 15, 0.12);
+      --shadow:     0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-lg:  0 10px 40px rgba(201, 168, 76, 0.12);
+      --radius:     6px;
+      --radius-lg:  10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Header ───────────────────────────────────────── */
+    .site-header {
+      background: var(--ink);
+      padding: 20px 0;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .logo { display: flex; align-items: baseline; gap: 12px; }
+
+    .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.9rem;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text em {
+      font-style: normal;
+      color: var(--gold);
+    }
+
+    .logo-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .header-cta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--gold);
+      border: none;
+      padding: 10px 22px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .header-cta:hover { background: var(--gold-hover); color: #fff; }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      background: var(--ink);
+      padding: 72px 32px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.04em;
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: var(--radius);
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-primary:hover { background: var(--gold-hover); color: #fff; transform: translateY(-1px); }
+
+    .hero-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Stats Bar ────────────────────────────────────── */
+    .stats-section {
+      background: var(--paper);
+      padding: 56px 32px 48px;
+    }
+
+    .stats-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stats-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .stats-eyebrow::before,
+    .stats-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 200px;
+    }
+
+    .stats-groups {
+      display: flex;
+      gap: 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .stats-group {
+      flex: 1;
+      padding: 0;
+    }
+
+    .stats-group-header {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 14px 24px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stats-group-header .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-gold { background: var(--gold); }
+    .dot-green { background: #1a6b3c; }
+
+    .stats-group-header.gold { color: var(--gold); background: rgba(201,168,76,0.05); }
+    .stats-group-header.green { color: #1a6b3c; background: rgba(26,107,60,0.04); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-cell {
+      padding: 20px 24px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .stat-cell:last-child { border-right: none; }
+
+    .stat-cell::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .stats-group:first-child .stat-cell::before { background: var(--gold); }
+    .stats-group:last-child .stat-cell::before { background: #1a6b3c; }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.55rem;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .stat-value.loading {
+      color: var(--muted);
+      font-size: 1.1rem;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .stats-divider {
+      width: 1px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ── Strategy Section ─────────────────────────────── */
+    .strategy-section {
+      background: var(--cream);
+      padding: 64px 32px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .strategy-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .strategy-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .strategy-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .strategy-desc {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 500;
+      color: var(--gold);
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 4px;
+      padding: 4px 8px;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .step-text strong { color: var(--ink); font-weight: 500; }
+
+    /* Strategy card */
+    .strategy-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: var(--ink);
+      padding: 24px 28px;
+      border-bottom: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+
+    .card-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--gold);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .card-body { padding: 28px; }
+
+    .card-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .card-stat {
+      background: #fff;
+      padding: 16px 18px;
+    }
+
+    .card-stat .stat-label { margin-bottom: 4px; }
+    .card-stat .stat-value { font-size: 1.3rem; }
+
+    .card-desc {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-cta {
+      display: block;
+      text-align: center;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px;
+      border-radius: var(--radius);
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .card-cta:hover { background: var(--gold-hover); color: #fff; transform: translateY(-1px); }
+
+    /* ── Subscribe Section ────────────────────────────── */
+    .subscribe-section {
+      background: var(--ink);
+      padding: 80px 32px;
+      border-top: 2px solid var(--gold);
+    }
+
+    .subscribe-inner {
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .subscribe-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .subscribe-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .subscribe-title em { font-style: normal; color: var(--gold); }
+
+    .subscribe-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      letter-spacing: 0.02em;
+    }
+
+    .form-wrap {
+      background: var(--paper);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      text-align: left;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    }
+
+    .form-row { margin-bottom: 16px; }
+
+    .form-row label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .form-row input {
+      width: 100%;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 11px 14px;
+      border-radius: var(--radius);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-row input:focus { border-color: var(--gold); }
+
+    .btn-subscribe {
+      width: 100%;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 4px;
+    }
+
+    .btn-subscribe:hover { background: var(--gold-hover); transform: translateY(-1px); }
+    .btn-subscribe:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .form-disclaimer {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.04em;
+      margin-top: 16px;
+    }
+
+    #form-message {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      text-align: center;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      display: none;
+    }
+
+    #form-message.success { background: rgba(26,107,60,0.12); color: #4caf7d; border: 1px solid rgba(26,107,60,0.3); }
+    #form-message.error   { background: rgba(192,57,43,0.1);  color: #e57373; border: 1px solid rgba(192,57,43,0.3); }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .site-footer {
+      background: var(--ink);
+      padding: 36px 32px;
+      border-top: 1px solid var(--gold);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .footer-logo em { font-style: normal; color: var(--gold); }
+
+    .footer-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.04em;
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    .footer-meta a { color: var(--gold); text-decoration: none; }
+    .footer-meta a:hover { text-decoration: underline; }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      .strategy-inner { grid-template-columns: 1fr; gap: 40px; }
+      .stats-groups { flex-direction: column; }
+      .stats-divider { width: 100%; height: 1px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 48px 20px 56px; }
+      .stats-section, .strategy-section { padding-left: 20px; padding-right: 20px; }
+      .header-inner { padding: 0 20px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-value { font-size: 1.2rem; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-meta { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" style="text-decoration:none; display:flex; align-items:baseline; gap:12px;">
+        <span class="logo-text">S&amp;P<em>3</em></span>
+        <span class="logo-sub">Weekly</span>
+      </a>
+      <a href="#subscribe" class="header-cta">Subscribe Free</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">30-Year DCA Backtest &nbsp;·&nbsp; Real MacroTrends Data</div>
+    <h1>The <em>top 3</em> S&amp;P 500 stocks.<br>Every Friday.</h1>
+    <p class="hero-sub">$100 per stock · $300/week total · Dollar-cost average into the largest companies by market cap — automatically tracked, every Friday.</p>
+    <div class="hero-actions">
+      <a href="#subscribe" class="btn-primary">Get the Free Newsletter</a>
+    </div>
+  </section>
+
+  <!-- Backtest Stats -->
+  <section class="stats-section">
+    <div class="stats-inner">
+      <div class="stats-eyebrow">30-Year Backtest Results &nbsp;(1996 – 2026)</div>
+
+      <div class="stats-groups">
+        <!-- S&P 3 -->
+        <div class="stats-group">
+          <div class="stats-group-header gold">
+            <span class="dot dot-gold"></span>
+            S&amp;P 3 Strategy
+          </div>
+          <div class="stats-grid">
+            <div class="stat-cell">
+              <div class="stat-label">Ending Value</div>
+              <div class="stat-value loading" id="sp3-final">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Total Return</div>
+              <div class="stat-value loading" id="sp3-return">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">CAGR</div>
+              <div class="stat-value loading" id="sp3-cagr">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Contributed</div>
+              <div class="stat-value loading" id="sp3-contributed">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-divider"></div>
+
+        <!-- SPY -->
+        <div class="stats-group">
+          <div class="stats-group-header green">
+            <span class="dot dot-green"></span>
+            SPY Benchmark
+          </div>
+          <div class="stats-grid">
+            <div class="stat-cell">
+              <div class="stat-label">Ending Value</div>
+              <div class="stat-value loading" id="spy-final">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Total Return</div>
+              <div class="stat-value loading" id="spy-return">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">CAGR</div>
+              <div class="stat-value loading" id="spy-cagr">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Contributed</div>
+              <div class="stat-value loading" id="spy-contributed">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Strategy -->
+  <section class="strategy-section">
+    <div class="strategy-inner">
+
+      <!-- Left: explanation -->
+      <div>
+        <div class="strategy-label">The Strategy</div>
+        <h2 class="strategy-title">Simple rules.<br>Proven results.</h2>
+        <p class="strategy-desc">Every Friday, identify the top 3 S&amp;P 500 companies by market cap and invest $100 into each — $300 per week total. No research, no timing, no guessing.</p>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">01</span>
+            <span class="step-text"><strong>Identify</strong> — Every Friday, find the top 3 S&amp;P 500 stocks by market capitalisation.</span>
+          </div>
+          <div class="step">
+            <span class="step-num">02</span>
+            <span class="step-text"><strong>Invest</strong> — Buy $100 of each stock — $300 total per week via dollar-cost averaging.</span>
+          </div>
+          <div class="step">
+            <span class="step-num">03</span>
+            <span class="step-text"><strong>Repeat</strong> — Hold and accumulate. Let compounding do the work over time.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: card -->
+      <div class="strategy-card">
+        <div class="card-header">
+          <span class="card-title">S&amp;P 3 Weekly</span>
+          <span class="card-badge">Active</span>
+        </div>
+        <div class="card-body">
+          <div class="card-stat-row">
+            <div class="card-stat">
+              <div class="stat-label">30yr Return</div>
+              <div class="stat-value" id="card-sp3-return">—</div>
+            </div>
+            <div class="card-stat">
+              <div class="stat-label">vs SPY</div>
+              <div class="stat-value" id="card-outperform">—</div>
+            </div>
+          </div>
+          <p class="card-desc">Invest in the top 3 S&amp;P 500 companies by market cap. $100 per stock, every Friday. Free weekly newsletter with this week's picks — delivered every Friday before market open.</p>
+          <a href="#subscribe" class="card-cta">Subscribe — It's Free</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Subscribe -->
+  <section id="subscribe" class="subscribe-section">
+    <div class="subscribe-inner">
+      <div class="subscribe-eyebrow">&#9632; &nbsp; Free Newsletter &nbsp; &#9632;</div>
+      <h2 class="subscribe-title">Get the <em>S&amp;P 3</em><br>every Friday.</h2>
+      <p class="subscribe-sub">The top 3 S&amp;P 500 companies by market cap. $100 each. Delivered before market open — no research required.</p>
+
+      <div class="form-wrap">
+        <form id="subscribeForm">
+          <div class="form-row">
+            <label>First name (optional)</label>
+            <input type="text" id="nameInput" name="name" placeholder="Derek" />
+          </div>
+          <div class="form-row">
+            <label>Email address *</label>
+            <input type="email" id="emailInput" name="email" placeholder="you@email.com" required />
+          </div>
+          <button type="submit" class="btn-subscribe">Get the S&amp;P 3 Weekly →</button>
+        </form>
+        <div id="form-message"></div>
+      </div>
+      <p class="form-disclaimer">Free. No spam. Unsubscribe any time. Not financial advice.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">S&amp;P<em>3</em> Weekly</div>
+      <div class="footer-meta">
+        <div>© 2026 S&amp;P 3 Weekly &nbsp;·&nbsp; <a href="#subscribe">Subscribe</a></div>
+        <div>For informational purposes only. Not financial advice.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    async function loadStats() {
+      try {
+        const res  = await fetch('/api/analytics');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const fmt$ = v => '$' + Math.round(v).toLocaleString('en-US');
+        const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+
+        const sp3Final    = data.chart_data.sp3_values.at(-1);
+        const spyFinal    = data.chart_data.sp500_values.at(-1);
+        const contributed = data.chart_data.principal_values.at(-1);
+
+        const sp3Ret = data.sp3_total_return_pct;
+        const spyRet = data.sp500_total_return_pct;
+        const sp3Cagr = (data.sp3_annualized_return * 100).toFixed(2) + '%';
+        const spyCagr = (data.sp500_annualized_return * 100).toFixed(2) + '%';
+        const outperform = fmtPct(sp3Ret - spyRet);
+
+        document.getElementById('sp3-final').textContent      = fmt$(sp3Final);
+        document.getElementById('sp3-return').textContent     = fmtPct(sp3Ret);
+        document.getElementById('sp3-cagr').textContent       = sp3Cagr;
+        document.getElementById('sp3-contributed').textContent = fmt$(contributed);
+
+        document.getElementById('spy-final').textContent      = fmt$(spyFinal);
+        document.getElementById('spy-return').textContent     = fmtPct(spyRet);
+        document.getElementById('spy-cagr').textContent       = spyCagr;
+        document.getElementById('spy-contributed').textContent = fmt$(contributed);
+
+        document.getElementById('card-sp3-return').textContent  = fmtPct(sp3Ret);
+        document.getElementById('card-outperform').textContent  = outperform;
+
+        // Remove loading style once populated
+        document.querySelectorAll('.stat-value.loading').forEach(el => el.classList.remove('loading'));
+
+      } catch (e) {
+        console.warn('Stats unavailable:', e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadStats);
+
+    // ── Subscribe form ──────────────────────────────────
+    document.getElementById('subscribeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email  = document.getElementById('emailInput').value.trim();
+      const name   = document.getElementById('nameInput').value.trim();
+      const msgEl  = document.getElementById('form-message');
+      const btn    = this.querySelector('.btn-subscribe');
+
+      btn.textContent = 'Subscribing...';
+      btn.disabled = true;
+
+      try {
+        const res  = await fetch('/sp3subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name: name || null }),
+        });
+        const data = await res.json();
+        msgEl.style.display = 'block';
+        if (res.ok) {
+          msgEl.className = 'success';
+          msgEl.textContent = data.message;
+          document.getElementById('subscribeForm').reset();
+        } else {
+          msgEl.className = 'error';
+          msgEl.textContent = data.detail || 'Something went wrong. Try again.';
+        }
+      } catch (err) {
+        msgEl.style.display = 'block';
+        msgEl.className = 'error';
+        msgEl.textContent = 'Network error. Please try again.';
+      } finally {
+        btn.textContent = 'Get the S&P 3 Weekly →';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
