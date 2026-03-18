@@ -229,7 +229,7 @@ async function addTestSubscriber() {
   const el = document.getElementById('subscribe-result');
   if (!email) return;
   try {
-    const res = await fetch('/subscribe', {
+    const res = await fetch('/sp3subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),

@@ -334,8 +334,7 @@
                         <h3>${strategy.name}</h3>
                         <p>${strategy.description || 'Detailed strategy analysis and performance metrics.'}</p>
                         <div class="strategy-buttons">
-                            <a href="${strategy.landing_page}" class="strategy-cta">${strategy.is_active ? 'Explore Strategy' : 'Coming Soon'}</a>
-                            ${strategy.is_active ? `<a href="/subscribe" class="strategy-cta strategy-cta-secondary">Subscribe Now</a>` : ''}
+                            ${strategy.is_active ? `<a href="/sp3subscribe" class="strategy-cta">Subscribe Now</a>` : '<span class="strategy-cta strategy-cta-disabled">Coming Soon</span>'}
                         </div>
                     `;
 

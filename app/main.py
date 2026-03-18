@@ -39,7 +39,7 @@ async def lifespan(app: FastAPI):
                 name="S&P 3 Weekly",
                 slug="sp3-weekly",
                 description="Invest in the top 3 S&P 500 companies by market cap. $100 per stock, every Friday.",
-                landing_page="/sp3",
+                landing_page="/sp3subscribe",
                 api_endpoint="/api/analytics",
                 is_active=True
             )
@@ -132,9 +132,50 @@ def get_analytics(db: Session = Depends(lambda: __import__('sqlalchemy.orm', fro
     from .analytics import refresh_analytics_snapshot
     from datetime import date
 
+    # Try to load fixture data first (real 30-year backtest)
+    fixture_path = Path(__file__).parent / "fixtures" / "historical_data.json"
+    if fixture_path.exists():
+        try:
+            with open(fixture_path, 'r') as f:
+                fixture_data = json.load(f)
+            logger.info("✓ Loaded fixture data (30-year backtest)")
+            return AnalyticsResponse(
+                risk_grade=fixture_data.get('risk_grade', 'B'),
+                risk_description=fixture_data.get('risk_description', 'Moderate risk'),
+                sp3_total_return_pct=fixture_data.get('sp3_total_return_pct', 0),
+                sp3_annualized_return=fixture_data.get('sp3_annualized_return', 0),
+                sp3_max_drawdown=fixture_data.get('sp3_max_drawdown', 0),
+                sp3_sharpe_ratio=fixture_data.get('sp3_sharpe_ratio', 0),
+                sp3_volatility=fixture_data.get('sp3_volatility', 0),
+                sp3_position_value=fixture_data.get('sp3_position_value', 0),
+                sp500_total_return_pct=fixture_data.get('sp500_total_return_pct', 0),
+                sp500_annualized_return=fixture_data.get('sp500_annualized_return', 0),
+                sp500_max_drawdown=fixture_data.get('sp500_max_drawdown', 0),
+                sp500_sharpe_ratio=fixture_data.get('sp500_sharpe_ratio', 0),
+                sp500_volatility=fixture_data.get('sp500_volatility', 0),
+                chart_data=ChartData(
+                    dates=fixture_data['chart_data']['dates'],
+                    sp3_values=fixture_data['chart_data']['sp3_values'],
+                    sp500_values=fixture_data['chart_data']['sp500_values'],
+                    principal_values=fixture_data['chart_data']['principal_values']
+                ),
+                current_allocation=[
+                    AllocationItem(
+                        ticker=item['ticker'],
+                        weight=item['weight'],
+                        value=item['value'],
+                        shares=item['shares']
+                    )
+                    for item in fixture_data.get('current_allocation', [])
+                ],
+                last_updated=fixture_data.get('last_updated', datetime.utcnow().isoformat())
+            )
+        except Exception as e:
+            logger.warning(f"Could not load fixture data: {e}")
+
     db = SessionLocal()
     try:
-        # Get latest snapshot
+        # Get latest snapshot from database
         snapshot = (
             db.query(AnalyticsSnapshot)
             .order_by(AnalyticsSnapshot.snapshot_date.desc())
@@ -170,31 +211,35 @@ def get_analytics(db: Session = Depends(lambda: __import__('sqlalchemy.orm', fro
                             logger.info("✓ Loaded fixture data, returning historical performance")
                             # Return fixture data directly
                             return AnalyticsResponse(
-                                risk_grade="B",
-                                risk_description="Moderate risk - concentrated exposure to top 3 S&P 500 companies",
-                                sp3_total_return_pct=131.8,
-                                sp3_annualized_return=0.1089,
-                                sp3_max_drawdown=-0.25,
-                                sp3_sharpe_ratio=1.65,
-                                sp3_volatility=0.42,
-                                sp3_position_value=363060,
-                                sp500_total_return_pct=98.9,
-                                sp500_annualized_return=0.0885,
-                                sp500_max_drawdown=-0.22,
-                                sp500_sharpe_ratio=1.55,
-                                sp500_volatility=0.38,
+                                risk_grade=fixture_data.get('risk_grade', 'B'),
+                                risk_description=fixture_data.get('risk_description', 'Moderate risk'),
+                                sp3_total_return_pct=fixture_data.get('sp3_total_return_pct', 0),
+                                sp3_annualized_return=fixture_data.get('sp3_annualized_return', 0),
+                                sp3_max_drawdown=fixture_data.get('sp3_max_drawdown', 0),
+                                sp3_sharpe_ratio=fixture_data.get('sp3_sharpe_ratio', 0),
+                                sp3_volatility=fixture_data.get('sp3_volatility', 0),
+                                sp3_position_value=fixture_data.get('sp3_position_value', 0),
+                                sp500_total_return_pct=fixture_data.get('sp500_total_return_pct', 0),
+                                sp500_annualized_return=fixture_data.get('sp500_annualized_return', 0),
+                                sp500_max_drawdown=fixture_data.get('sp500_max_drawdown', 0),
+                                sp500_sharpe_ratio=fixture_data.get('sp500_sharpe_ratio', 0),
+                                sp500_volatility=fixture_data.get('sp500_volatility', 0),
                                 chart_data=ChartData(
-                                    dates=fixture_data['dates'],
-                                    sp3_values=fixture_data['sp3_values'],
-                                    sp500_values=fixture_data['sp500_values'],
-                                    principal_values=fixture_data['principal_values']
+                                    dates=fixture_data['chart_data']['dates'],
+                                    sp3_values=fixture_data['chart_data']['sp3_values'],
+                                    sp500_values=fixture_data['chart_data']['sp500_values'],
+                                    principal_values=fixture_data['chart_data']['principal_values']
                                 ),
                                 current_allocation=[
-                                    AllocationItem(ticker="NVDA", weight=40.0, value=145224, shares=100),
-                                    AllocationItem(ticker="AAPL", weight=35.0, value=127071, shares=150),
-                                    AllocationItem(ticker="MSFT", weight=25.0, value=90765, shares=120),
+                                    AllocationItem(
+                                        ticker=item['ticker'],
+                                        weight=item['weight'],
+                                        value=item['value'],
+                                        shares=item['shares']
+                                    )
+                                    for item in fixture_data.get('current_allocation', [])
                                 ],
-                                last_updated=datetime.utcnow().isoformat()
+                                last_updated=fixture_data.get('last_updated', datetime.utcnow().isoformat())
                             )
                     except Exception as fixture_error:
                         logger.error(f"Fixture fallback failed: {fixture_error}")
@@ -269,13 +314,7 @@ def get_strategies(db: Session = Depends(lambda: __import__('sqlalchemy.orm', fr
     return strategies
 
 
-@app.get("/sp3", response_class=HTMLResponse)
-def sp3_page(request: Request):
-    """S&P 3 Weekly strategy page with explanation, performance analysis, and risk grade."""
-    return templates.TemplateResponse("landing.html", {"request": request})
-
-
-@app.get("/subscribe", response_class=HTMLResponse)
+@app.get("/sp3subscribe", response_class=HTMLResponse)
 def subscribe_page(request: Request):
     """Subscription form page."""
     return templates.TemplateResponse("subscribe.html", {"request": request})

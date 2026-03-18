@@ -45,7 +45,7 @@ def require_admin(x_admin_secret: str = Header(None)):
 
 # ─── Public routes ────────────────────────────────────────────────────────────
 
-@router.post("/subscribe", response_model=SubscribeResponse)
+@router.post("/sp3subscribe", response_model=SubscribeResponse)
 def subscribe(payload: SubscribeRequest, db: Session = Depends(get_db)):
     existing = db.query(Subscriber).filter(Subscriber.email == payload.email).first()
     if existing:

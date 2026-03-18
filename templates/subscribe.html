@@ -222,7 +222,7 @@ document.getElementById('subscribeForm').addEventListener('submit', async functi
   btn.disabled = true;
 
   try {
-    const res = await fetch('/subscribe', {
+    const res = await fetch('/sp3subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, name: name || null }),
