@@ -1,353 +1,716 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Strategies - S&P Analytics</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S&P 3 Weekly — The Top 3 S&P 500 Stocks, Every Friday</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        #0a0a0f;
+      --ink-light:  #1a1a20;
+      --paper:      #f5f3ee;
+      --cream:      #edeae3;
+      --gold:       #c9a84c;
+      --gold-hover: #9f7f48;
+      --gold-light: rgba(201, 168, 76, 0.14);
+      --muted:      #7a7870;
+      --border:     rgba(10, 10, 15, 0.12);
+      --shadow:     0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-lg:  0 10px 40px rgba(201, 168, 76, 0.12);
+      --radius:     6px;
+      --radius-lg:  10px;
+    }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f8f5f0;
-            color: #0a0a0f;
-            line-height: 1.6;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
-        header {
-            background: white;
-            padding: 20px;
-            border-bottom: 1px solid #e0dcd8;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+    }
 
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+    /* ── Header ───────────────────────────────────────── */
+    .site-header {
+      background: var(--ink);
+      padding: 20px 0;
+      border-bottom: 2px solid var(--gold);
+    }
 
-        .logo {
-            font-family: 'DM Serif Display', serif;
-            font-size: 24px;
-            font-weight: bold;
-            color: #0a0a0f;
-        }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
 
-        .logo span {
-            color: #b8975a;
-        }
+    .logo { display: flex; align-items: baseline; gap: 12px; }
 
-        nav {
-            display: flex;
-            gap: 30px;
-        }
+    .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.9rem;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
 
-        nav a {
-            text-decoration: none;
-            color: #0a0a0f;
-            font-size: 14px;
-            transition: color 0.3s;
-        }
+    .logo-text em {
+      font-style: normal;
+      color: var(--gold);
+    }
 
-        nav a:hover {
-            color: #b8975a;
-        }
+    .logo-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
 
-        .hero {
-            background: linear-gradient(135deg, #f8f5f0 0%, #edeae3 100%);
-            padding: 80px 20px;
-            text-align: center;
-        }
+    .header-cta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--gold);
+      border: none;
+      padding: 10px 22px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
 
-        .hero h1 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: #0a0a0f;
-        }
+    .header-cta:hover { background: var(--gold-hover); color: #fff; }
 
-        .hero p {
-            font-size: 18px;
-            color: #7a7870;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      background: var(--ink);
+      padding: 72px 32px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
 
-        .strategies-section {
-            padding: 80px 20px;
-            background: white;
-        }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
 
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
 
-        .section-header h2 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 42px;
-            margin-bottom: 15px;
-            color: #0a0a0f;
-        }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold);
+    }
 
-        .section-header p {
-            font-size: 16px;
-            color: #7a7870;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+    .hero-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.04em;
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+    }
 
-        .strategies-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-bottom: 60px;
-        }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
 
-        .strategy-card {
-            background: white;
-            border: 1px solid #e0dcd8;
-            border-radius: 8px;
-            padding: 30px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
+    .btn-primary {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: var(--radius);
+      transition: background 0.2s, transform 0.15s;
+    }
 
-        .strategy-card:hover {
-            border-color: #b8975a;
-            box-shadow: 0 10px 40px rgba(184, 151, 90, 0.1);
-            transform: translateY(-4px);
-        }
+    .btn-primary:hover { background: var(--gold-hover); color: #fff; transform: translateY(-1px); }
 
-        .strategy-badge {
-            display: inline-block;
-            background: #b8975a;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            width: fit-content;
-        }
+    .hero-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.06em;
+    }
 
-        .strategy-card h3 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #0a0a0f;
-        }
+    /* ── Stats Bar ────────────────────────────────────── */
+    .stats-section {
+      background: var(--paper);
+      padding: 56px 32px 48px;
+    }
 
-        .strategy-card p {
-            font-size: 14px;
-            color: #7a7870;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
+    .stats-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .strategy-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: auto;
-            justify-content: center;
-            width: 100%;
-        }
+    .stats-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
 
-        .strategy-cta {
-            display: inline-block;
-            background: #b8975a;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
+    .stats-eyebrow::before,
+    .stats-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 200px;
+    }
 
-        .strategy-cta:hover {
-            background: #9d7f4a;
-        }
+    .stats-groups {
+      display: flex;
+      gap: 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
 
-        .strategy-cta-secondary {
-            background: white;
-            color: #b8975a;
-            border: 2px solid #b8975a;
-            padding: 8px 18px;
-        }
+    .stats-group {
+      flex: 1;
+      padding: 0;
+    }
 
-        .strategy-cta-secondary:hover {
-            background: #f8f5f0;
-        }
+    .stats-group-header {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 14px 24px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .coming-soon {
-            background: #f0ebe8;
-            border-color: #d4ccc5;
-        }
+    .stats-group-header .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
 
-        .coming-soon .strategy-badge {
-            background: #ccc;
-        }
+    .dot-gold { background: var(--gold); }
+    .dot-green { background: #1a6b3c; }
 
-        .coming-soon .strategy-cta {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+    .stats-group-header.gold { color: var(--gold); background: rgba(201,168,76,0.05); }
+    .stats-group-header.green { color: #1a6b3c; background: rgba(26,107,60,0.04); }
 
-        .coming-soon .strategy-cta:hover {
-            background: #ccc;
-        }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
 
-        footer {
-            background: #0a0a0f;
-            color: #edeae3;
-            padding: 40px 20px;
-            text-align: center;
-            font-size: 14px;
-        }
+    .stat-cell {
+      padding: 20px 24px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
 
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    .stat-cell:last-child { border-right: none; }
 
-        footer a {
-            color: #b8975a;
-            text-decoration: none;
-        }
+    .stat-cell::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
 
-        footer a:hover {
-            text-decoration: underline;
-        }
+    .stats-group:first-child .stat-cell::before { background: var(--gold); }
+    .stats-group:last-child .stat-cell::before { background: #1a6b3c; }
 
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 32px;
-            }
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
 
-            .section-header h2 {
-                font-size: 28px;
-            }
+    .stat-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.55rem;
+      color: var(--ink);
+      line-height: 1.1;
+    }
 
-            .strategies-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
+    .stat-value.loading {
+      color: var(--muted);
+      font-size: 1.1rem;
+      font-family: 'DM Mono', monospace;
+    }
 
-            nav {
-                gap: 15px;
-                font-size: 13px;
-            }
-        }
-    </style>
+    .stats-divider {
+      width: 1px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ── Strategy Section ─────────────────────────────── */
+    .strategy-section {
+      background: var(--cream);
+      padding: 64px 32px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .strategy-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .strategy-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .strategy-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .strategy-desc {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 500;
+      color: var(--gold);
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 4px;
+      padding: 4px 8px;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .step-text strong { color: var(--ink); font-weight: 500; }
+
+    /* Strategy card */
+    .strategy-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: var(--ink);
+      padding: 24px 28px;
+      border-bottom: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+
+    .card-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--gold);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .card-body { padding: 28px; }
+
+    .card-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .card-stat {
+      background: #fff;
+      padding: 16px 18px;
+    }
+
+    .card-stat .stat-label { margin-bottom: 4px; }
+    .card-stat .stat-value { font-size: 1.3rem; }
+
+    .card-desc {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-cta {
+      display: block;
+      text-align: center;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px;
+      border-radius: var(--radius);
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .card-cta:hover { background: var(--gold-hover); color: #fff; transform: translateY(-1px); }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .site-footer {
+      background: var(--ink);
+      padding: 36px 32px;
+      border-top: 1px solid var(--gold);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .footer-logo em { font-style: normal; color: var(--gold); }
+
+    .footer-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.04em;
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    .footer-meta a { color: var(--gold); text-decoration: none; }
+    .footer-meta a:hover { text-decoration: underline; }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      .strategy-inner { grid-template-columns: 1fr; gap: 40px; }
+      .stats-groups { flex-direction: column; }
+      .stats-divider { width: 100%; height: 1px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 48px 20px 56px; }
+      .stats-section, .strategy-section { padding-left: 20px; padding-right: 20px; }
+      .header-inner { padding: 0 20px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-value { font-size: 1.2rem; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-meta { text-align: left; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-content">
-            <div class="logo">S&P <span>Analytics</span></div>
-            <nav>
-                <a href="/">Home</a>
-                <a href="#strategies">Strategies</a>
-            </nav>
-        </div>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Data-Driven Investment Strategies</h1>
-            <p>Explore research-backed portfolio strategies backed by 10+ years of historical analysis and backtesting.</p>
-        </div>
-    </section>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-text">S&amp;P<em>3</em></span>
+        <span class="logo-sub">Weekly</span>
+      </div>
+      <a href="/sp3subscribe" class="header-cta">Subscribe Free</a>
+    </div>
+  </header>
 
-    <!-- Strategies Section -->
-    <section class="strategies-section" id="strategies">
-        <div class="container">
-            <div class="section-header">
-                <h2>Available Strategies</h2>
-                <p>Choose a strategy and dive into detailed performance analytics, risk assessment, and allocation breakdowns.</p>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">30-Year DCA Backtest &nbsp;·&nbsp; Real MacroTrends Data</div>
+    <h1>The <em>top 3</em> S&amp;P 500 stocks.<br>Every Friday.</h1>
+    <p class="hero-sub">$100 per stock · $300/week total · Dollar-cost average into the largest companies by market cap — automatically tracked, every Friday.</p>
+    <div class="hero-actions">
+      <a href="/sp3subscribe" class="btn-primary">Get the Free Newsletter</a>
+    </div>
+  </section>
+
+  <!-- Backtest Stats -->
+  <section class="stats-section">
+    <div class="stats-inner">
+      <div class="stats-eyebrow">30-Year Backtest Results &nbsp;(1996 – 2026)</div>
+
+      <div class="stats-groups">
+        <!-- S&P 3 -->
+        <div class="stats-group">
+          <div class="stats-group-header gold">
+            <span class="dot dot-gold"></span>
+            S&amp;P 3 Strategy
+          </div>
+          <div class="stats-grid">
+            <div class="stat-cell">
+              <div class="stat-label">Ending Value</div>
+              <div class="stat-value loading" id="sp3-final">—</div>
             </div>
-
-            <div class="strategies-grid" id="strategies-grid">
-                <!-- Strategy cards will be populated here by JavaScript -->
-                <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
-                    <p>Loading strategies...</p>
-                </div>
+            <div class="stat-cell">
+              <div class="stat-label">Total Return</div>
+              <div class="stat-value loading" id="sp3-return">—</div>
             </div>
+            <div class="stat-cell">
+              <div class="stat-label">CAGR</div>
+              <div class="stat-value loading" id="sp3-cagr">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Contributed</div>
+              <div class="stat-value loading" id="sp3-contributed">—</div>
+            </div>
+          </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 S&P Analytics. All rights reserved.</p>
-            <p style="margin-top: 20px; font-size: 12px; color: #999;">
-                Disclaimer: This analysis is for informational purposes only and not investment advice.
-            </p>
+        <div class="stats-divider"></div>
+
+        <!-- SPY -->
+        <div class="stats-group">
+          <div class="stats-group-header green">
+            <span class="dot dot-green"></span>
+            SPY Benchmark
+          </div>
+          <div class="stats-grid">
+            <div class="stat-cell">
+              <div class="stat-label">Ending Value</div>
+              <div class="stat-value loading" id="spy-final">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Total Return</div>
+              <div class="stat-value loading" id="spy-return">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">CAGR</div>
+              <div class="stat-value loading" id="spy-cagr">—</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Contributed</div>
+              <div class="stat-value loading" id="spy-contributed">—</div>
+            </div>
+          </div>
         </div>
-    </footer>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        // Fetch and render strategy cards
-        async function loadStrategies() {
-            try {
-                const response = await fetch('/api/strategies');
-                const strategies = await response.json();
+  <!-- Strategy -->
+  <section class="strategy-section">
+    <div class="strategy-inner">
 
-                const grid = document.getElementById('strategies-grid');
-                grid.innerHTML = '';
+      <!-- Left: explanation -->
+      <div>
+        <div class="strategy-label">The Strategy</div>
+        <h2 class="strategy-title">Simple rules.<br>Proven results.</h2>
+        <p class="strategy-desc">Every Friday, identify the top 3 S&amp;P 500 companies by market cap and invest $100 into each — $300 per week total. No research, no timing, no guessing.</p>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">01</span>
+            <span class="step-text"><strong>Identify</strong> — Every Friday, find the top 3 S&amp;P 500 stocks by market capitalisation.</span>
+          </div>
+          <div class="step">
+            <span class="step-num">02</span>
+            <span class="step-text"><strong>Invest</strong> — Buy $100 of each stock — $300 total per week via dollar-cost averaging.</span>
+          </div>
+          <div class="step">
+            <span class="step-num">03</span>
+            <span class="step-text"><strong>Repeat</strong> — Hold and accumulate. Let compounding do the work over time.</span>
+          </div>
+        </div>
+      </div>
 
-                if (strategies.length === 0) {
-                    grid.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><p>No strategies available yet.</p></div>';
-                    return;
-                }
+      <!-- Right: card -->
+      <div class="strategy-card">
+        <div class="card-header">
+          <span class="card-title">S&amp;P 3 Weekly</span>
+          <span class="card-badge">Active</span>
+        </div>
+        <div class="card-body">
+          <div class="card-stat-row">
+            <div class="card-stat">
+              <div class="stat-label">30yr Return</div>
+              <div class="stat-value" id="card-sp3-return">—</div>
+            </div>
+            <div class="card-stat">
+              <div class="stat-label">vs SPY</div>
+              <div class="stat-value" id="card-outperform">—</div>
+            </div>
+          </div>
+          <p class="card-desc">Invest in the top 3 S&amp;P 500 companies by market cap. $100 per stock, every Friday. Free weekly newsletter with this week's picks — delivered every Friday before market open.</p>
+          <a href="/sp3subscribe" class="card-cta">Subscribe — It's Free</a>
+        </div>
+      </div>
 
-                strategies.forEach(strategy => {
-                    const card = document.createElement('div');
-                    card.className = `strategy-card ${!strategy.is_active ? 'coming-soon' : ''}`;
+    </div>
+  </section>
 
-                    card.innerHTML = `
-                        <div class="strategy-badge">${strategy.is_active ? 'Active' : 'Coming Soon'}</div>
-                        <h3>${strategy.name}</h3>
-                        <p>${strategy.description || 'Detailed strategy analysis and performance metrics.'}</p>
-                        <div class="strategy-buttons">
-                            ${strategy.is_active ? `<a href="/sp3subscribe" class="strategy-cta">Subscribe Now</a>` : '<span class="strategy-cta strategy-cta-disabled">Coming Soon</span>'}
-                        </div>
-                    `;
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">S&amp;P<em>3</em> Weekly</div>
+      <div class="footer-meta">
+        <div>© 2026 S&amp;P 3 Weekly &nbsp;·&nbsp; <a href="/sp3subscribe">Subscribe</a></div>
+        <div>For informational purposes only. Not financial advice.</div>
+      </div>
+    </div>
+  </footer>
 
-                    grid.appendChild(card);
-                });
-            } catch (error) {
-                console.error('Error loading strategies:', error);
-                document.getElementById('strategies-grid').innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><p>Error loading strategies. Please try again later.</p></div>';
-            }
-        }
+  <script>
+    async function loadStats() {
+      try {
+        const res  = await fetch('/api/analytics');
+        if (!res.ok) return;
+        const data = await res.json();
 
-        // Load strategies on page load
-        document.addEventListener('DOMContentLoaded', loadStrategies);
-    </script>
+        const fmt$ = v => '$' + Math.round(v).toLocaleString('en-US');
+        const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+
+        const sp3Final    = data.chart_data.sp3_values.at(-1);
+        const spyFinal    = data.chart_data.sp500_values.at(-1);
+        const contributed = data.chart_data.principal_values.at(-1);
+
+        const sp3Ret = data.sp3_total_return_pct;
+        const spyRet = data.sp500_total_return_pct;
+        const sp3Cagr = (data.sp3_annualized_return * 100).toFixed(2) + '%';
+        const spyCagr = (data.sp500_annualized_return * 100).toFixed(2) + '%';
+        const outperform = fmtPct(sp3Ret - spyRet);
+
+        document.getElementById('sp3-final').textContent      = fmt$(sp3Final);
+        document.getElementById('sp3-return').textContent     = fmtPct(sp3Ret);
+        document.getElementById('sp3-cagr').textContent       = sp3Cagr;
+        document.getElementById('sp3-contributed').textContent = fmt$(contributed);
+
+        document.getElementById('spy-final').textContent      = fmt$(spyFinal);
+        document.getElementById('spy-return').textContent     = fmtPct(spyRet);
+        document.getElementById('spy-cagr').textContent       = spyCagr;
+        document.getElementById('spy-contributed').textContent = fmt$(contributed);
+
+        document.getElementById('card-sp3-return').textContent  = fmtPct(sp3Ret);
+        document.getElementById('card-outperform').textContent  = outperform;
+
+        // Remove loading style once populated
+        document.querySelectorAll('.stat-value.loading').forEach(el => el.classList.remove('loading'));
+
+      } catch (e) {
+        console.warn('Stats unavailable:', e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadStats);
+  </script>
 </body>
 </html>
