@@ -165,16 +165,24 @@ async def trigger_preview(payload: SendRequest = SendRequest(), db: Session = De
 
 @router.post("/send-now", dependencies=[Depends(require_admin)])
 async def trigger_send(payload: SendRequest = SendRequest(), db: Session = Depends(get_db)):
-    from .fetcher import get_top_n_sp500
-    from .newsletter import generate_newsletter
     from .mailer import send_to_all_subscribers
-    from .database import WeeklyPick, get_issue_number
 
-    picks = get_top_n_sp500(n=3)
+    strategy = payload.strategy
     issue_number = get_issue_number(db)
-    html = generate_newsletter(picks=picks, week_date=date.today(), issue_number=issue_number)
-    result = send_to_all_subscribers(db, html, date.today(), picks, strategy=payload.strategy)
-    label = payload.strategy.upper() if payload.strategy else "all strategies"
+
+    if strategy == "sf":
+        from .sf_fetcher import get_silicon_fund_picks
+        from .sf_newsletter import generate_sf_newsletter
+        picks = get_silicon_fund_picks(n=5)
+        html = generate_sf_newsletter(picks=picks, week_date=date.today(), issue_number=issue_number)
+    else:
+        from .fetcher import get_top_n_sp500
+        from .newsletter import generate_newsletter
+        picks = get_top_n_sp500(n=3)
+        html = generate_newsletter(picks=picks, week_date=date.today(), issue_number=issue_number)
+
+    result = send_to_all_subscribers(db, html, date.today(), picks, strategy=strategy)
+    label = strategy.upper() if strategy else "all strategies"
     return {"status": "ok", "message": f"Sent {result['sent']} emails to {label} subscribers ({result['failed']} failed)"}
 
 
