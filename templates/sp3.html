@@ -871,7 +871,7 @@
         const res  = await fetch('/sp3subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name: name || null }),
+          body: JSON.stringify({ email, name: name || null, strategy: "sp3" }),
         });
         const data = await res.json();
         msgEl.style.display = 'block';

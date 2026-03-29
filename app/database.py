@@ -47,6 +47,7 @@ class Subscriber(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=True)
+    strategy = Column(String, default="sp3", nullable=False)
     subscribed_at = Column(DateTime, default=datetime.utcnow)
     is_active = Column(Boolean, default=True)
     unsubscribe_token = Column(String, unique=True, default=lambda: str(uuid.uuid4()))
@@ -113,6 +114,14 @@ class AnalyticsSnapshot(Base):
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
+    # Migrate: add strategy column to existing subscribers tables
+    from sqlalchemy import text
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE subscribers ADD COLUMN strategy VARCHAR NOT NULL DEFAULT 'sp3'"))
+            conn.commit()
+        except Exception:
+            pass  # Column already exists
 
 
 def get_db():

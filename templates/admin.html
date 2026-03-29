@@ -7,26 +7,34 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{--ink:#0a0a0f;--paper:#f5f3ee;--gold:#c9a84c;--muted:#7a7870;--border:rgba(10,10,15,0.12);}
+:root{--ink:#0a0a0f;--paper:#f5f3ee;--cream:#edeae3;--gold:#c9a84c;--muted:#7a7870;--border:rgba(10,10,15,0.12);--green:#1a6b3c;}
 body{background:var(--paper);font-family:'DM Mono',monospace;color:var(--ink);}
-header{background:var(--ink);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;}
+header{background:var(--ink);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--gold);}
 .logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#f5f3ee;}
 .logo em{color:var(--gold);font-style:normal;}
 .badge{font-size:10px;color:var(--muted);letter-spacing:0.12em;}
-
-.main{max-width:960px;margin:0 auto;padding:32px 24px;}
+.main{max-width:1000px;margin:0 auto;padding:32px 24px;}
 h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;margin-bottom:16px;}
 
 /* STATS ROW */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;}
 .stat{background:var(--ink);padding:20px;color:var(--gold);}
 .stat .s-label{font-size:9px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;}
 .stat .s-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;line-height:1;}
 .stat .s-sub{font-size:10px;color:var(--muted);margin-top:4px;}
+.stat.highlight .s-val{color:var(--gold);}
+
+/* STRATEGY TABS */
+.tabs{display:flex;gap:0;border:1px solid var(--border);margin-bottom:24px;overflow:hidden;border-radius:6px;}
+.tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 20px;cursor:pointer;background:white;border:none;border-right:1px solid var(--border);color:var(--muted);transition:all 0.15s;}
+.tab:last-child{border-right:none;}
+.tab:hover{background:var(--cream);}
+.tab.active{background:var(--ink);color:var(--gold);}
+.tab .tab-count{font-size:9px;margin-left:6px;opacity:0.7;}
 
 /* CARDS */
 .card{background:white;border:1px solid var(--border);margin-bottom:24px;}
-.card-header{background:var(--ink);padding:10px 20px;display:flex;align-items:center;gap:10px;}
+.card-header{background:var(--ink);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
 .card-header h3{font-size:11px;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;}
 .card-body{padding:20px;}
 
@@ -43,7 +51,7 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
 .pick-mcap{font-size:13px;font-weight:500;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
 
 /* ACTIONS */
-.actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
 .btn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;padding:10px 20px;border:none;cursor:pointer;transition:opacity 0.15s;}
 .btn:hover{opacity:0.85;}
 .btn-gold{background:var(--gold);color:var(--ink);}
@@ -58,19 +66,33 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
 .data-table th{text-align:left;font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border);}
 .data-table td{padding:8px 10px;border-bottom:1px solid #f0ede6;color:#3a3830;}
 .data-table tr:hover td{background:#fafaf8;}
+.strategy-badge{display:inline-block;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.25);}
+.status-active{color:var(--green);}
+.status-inactive{color:var(--muted);text-decoration:line-through;}
 
 /* TEST FORM */
-.test-form{display:flex;gap:10px;flex-wrap:wrap;}
-.test-form input{font-family:'DM Mono',monospace;font-size:12px;border:1px solid var(--border);padding:9px 12px;outline:none;flex:1;min-width:200px;}
-.test-form input:focus{border-color:var(--gold);}
+.test-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.form-group{display:flex;flex-direction:column;gap:6px;flex:1;min-width:160px;}
+.form-group label{font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+.test-form input, .test-form select{font-family:'DM Mono',monospace;font-size:12px;border:1px solid var(--border);padding:9px 12px;outline:none;background:white;}
+.test-form input:focus, .test-form select:focus{border-color:var(--gold);}
 
-@media(max-width:600px){.stats{grid-template-columns:1fr;}.picks-grid{grid-template-columns:1fr;}.actions{flex-direction:column;}}
+/* SUBSCRIBERS loading */
+#subs-loading{font-size:11px;color:var(--muted);padding:20px;text-align:center;}
+.subs-empty{font-size:11px;color:var(--muted);padding:20px;text-align:center;}
+
+@media(max-width:700px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .picks-grid{grid-template-columns:1fr;}
+  .actions{flex-direction:column;}
+  .tabs{flex-wrap:wrap;}
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">S&amp;P <em>3</em> Weekly <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-left:8px;">Admin</span></div>
+  <div class="logo">Besting the <em>Market</em> <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-left:8px;">Admin</span></div>
   <div class="badge">Internal Dashboard</div>
 </header>
 
@@ -78,20 +100,25 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
 
   <!-- STATS -->
   <div class="stats">
-    <div class="stat">
-      <div class="s-label">Active Subscribers</div>
+    <div class="stat highlight">
+      <div class="s-label">Total Subscribers</div>
       <div class="s-val">{{ total_subscribers }}</div>
-      <div class="s-sub">on the list</div>
+      <div class="s-sub">active across all strategies</div>
     </div>
     <div class="stat">
-      <div class="s-label">This Week's Picks</div>
+      <div class="s-label">S&amp;P 3 Weekly</div>
+      <div class="s-val">{{ strategy_counts.get('sp3', 0) }}</div>
+      <div class="s-sub">sp3 subscribers</div>
+    </div>
+    <div class="stat">
+      <div class="s-label">This Week's #1 Pick</div>
       <div class="s-val">{% if live_picks %}{{ live_picks[0].ticker }}{% else %}—{% endif %}</div>
-      <div class="s-sub">{% if live_picks %}{{ live_picks|map(attribute='ticker')|join(' · ') }}{% else %}Not yet fetched{% endif %}</div>
+      <div class="s-sub">{% if live_picks %}{{ live_picks|map(attribute='ticker')|join(' · ') }}{% else %}Not fetched{% endif %}</div>
     </div>
     <div class="stat">
       <div class="s-label">Last Issue Sent</div>
       <div class="s-val">{% if picks_history %}{{ picks_history[0].week_date.strftime('%b %-d') }}{% else %}—{% endif %}</div>
-      <div class="s-sub">{% if picks_history and picks_history[0].sent_at %}sent {{ picks_history[0].sent_at.strftime('%b %-d') }}{% else %}not yet sent{% endif %}</div>
+      <div class="s-sub">{% if picks_history and picks_history[0].sent_at %}{{ picks_history[0].sent_at.strftime('%b %-d') }}{% else %}not yet sent{% endif %}</div>
     </div>
   </div>
 
@@ -120,19 +147,56 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
     <div class="card-body">
       <div class="actions">
         <button class="btn btn-outline" onclick="sendPreview()">Send Preview to Admin</button>
-        <button class="btn btn-gold" onclick="if(confirm('Send to ALL active subscribers?')) sendNow()">Send to All Subscribers</button>
+        <button class="btn btn-gold" onclick="if(confirm('Send to ALL active SP3 subscribers?')) sendNow()">Send to All SP3 Subscribers</button>
       </div>
       <div id="action-result"></div>
     </div>
   </div>
 
-  <!-- TEST SUBSCRIBE -->
+  <!-- SUBSCRIBERS -->
+  <div class="card">
+    <div class="card-header">
+      <h3>&#9632; &nbsp; Subscribers</h3>
+      <span id="subs-count" style="font-size:10px;color:var(--muted);"></span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <!-- Strategy Tabs -->
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
+        <div class="tabs">
+          <button class="tab active" onclick="loadSubscribers(null, this)">All <span class="tab-count" id="tab-count-all">{{ total_subscribers }}</span></button>
+          <button class="tab" onclick="loadSubscribers('sp3', this)">SP3 <span class="tab-count" id="tab-count-sp3">{{ strategy_counts.get('sp3', 0) }}</span></button>
+          <button class="tab" onclick="loadSubscribers('sp5', this)">SP5 <span class="tab-count" id="tab-count-sp5">{{ strategy_counts.get('sp5', 0) }}</span></button>
+          <button class="tab" onclick="loadSubscribers('sp1', this)">SP1 <span class="tab-count" id="tab-count-sp1">{{ strategy_counts.get('sp1', 0) }}</span></button>
+        </div>
+      </div>
+      <div id="subs-container">
+        <div id="subs-loading">Loading subscribers...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD TEST SUBSCRIBER -->
   <div class="card">
     <div class="card-header"><h3>&#9632; &nbsp; Add Test Subscriber</h3></div>
     <div class="card-body">
       <div class="test-form">
-        <input type="email" id="test-email" placeholder="test@example.com" />
-        <button class="btn btn-dark" onclick="addTestSubscriber()">Subscribe</button>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="test-email" placeholder="test@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Name (optional)</label>
+          <input type="text" id="test-name" placeholder="Derek" />
+        </div>
+        <div class="form-group" style="max-width:140px;">
+          <label>Strategy</label>
+          <select id="test-strategy">
+            <option value="sp3">SP3</option>
+            <option value="sp5">SP5</option>
+            <option value="sp1">SP1</option>
+          </select>
+        </div>
+        <button class="btn btn-dark" style="margin-bottom:1px;" onclick="addTestSubscriber()">Subscribe</button>
       </div>
       <div id="subscribe-result" style="font-size:11px;margin-top:10px;"></div>
     </div>
@@ -146,12 +210,7 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
       <table class="data-table">
         <thead>
           <tr>
-            <th>Week Date</th>
-            <th>Rank</th>
-            <th>Ticker</th>
-            <th>Company</th>
-            <th>Market Cap</th>
-            <th>Sent</th>
+            <th>Week Date</th><th>Rank</th><th>Ticker</th><th>Company</th><th>Market Cap</th><th>Sent</th>
           </tr>
         </thead>
         <tbody>
@@ -162,11 +221,8 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
             <td style="font-weight:500;">{{ p.ticker }}</td>
             <td style="color:var(--muted);">{{ p.name }}</td>
             <td>
-              {% if p.market_cap >= 1_000_000_000_000 %}
-                ${{ "%.2f"|format(p.market_cap / 1e12) }}T
-              {% else %}
-                ${{ "%.1f"|format(p.market_cap / 1e9) }}B
-              {% endif %}
+              {% if p.market_cap >= 1_000_000_000_000 %}${{ "%.2f"|format(p.market_cap / 1e12) }}T
+              {% else %}${{ "%.1f"|format(p.market_cap / 1e9) }}B{% endif %}
             </td>
             <td style="color:{% if p.sent_at %}#1a6b3c{% else %}var(--muted){% endif %};">
               {% if p.sent_at %}✓ {{ p.sent_at.strftime('%b %-d') }}{% else %}Pending{% endif %}
@@ -185,67 +241,96 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
 const SECRET = '{{ secret }}';
 
 async function apiCall(url, method='POST') {
-  const res = await fetch(url, {
-    method,
-    headers: { 'X-Admin-Secret': SECRET },
-  });
+  const res = await fetch(url, { method, headers: { 'X-Admin-Secret': SECRET } });
   return res;
 }
 
 async function sendPreview() {
   const el = document.getElementById('action-result');
-  el.style.display = 'block';
-  el.textContent = 'Sending preview...';
-  el.className = '';
+  el.style.display = 'block'; el.textContent = 'Sending preview...'; el.className = '';
   try {
     const res = await apiCall('/send-preview');
     const data = await res.json();
     el.className = res.ok ? 'ok' : 'err';
     el.textContent = data.message || data.detail || 'Done';
-  } catch(e) {
-    el.className = 'err';
-    el.textContent = 'Request failed';
-  }
+  } catch(e) { el.className = 'err'; el.textContent = 'Request failed'; }
 }
 
 async function sendNow() {
   const el = document.getElementById('action-result');
-  el.style.display = 'block';
-  el.textContent = 'Sending to all subscribers...';
-  el.className = '';
+  el.style.display = 'block'; el.textContent = 'Sending to all subscribers...'; el.className = '';
   try {
     const res = await apiCall('/send-now');
     const data = await res.json();
     el.className = res.ok ? 'ok' : 'err';
     el.textContent = data.message || data.detail || 'Done';
+  } catch(e) { el.className = 'err'; el.textContent = 'Request failed'; }
+}
+
+async function loadSubscribers(strategy, tabEl) {
+  // Update active tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+
+  const container = document.getElementById('subs-container');
+  container.innerHTML = '<div id="subs-loading">Loading...</div>';
+
+  const url = strategy ? `/subscribers?strategy=${strategy}` : '/subscribers';
+  try {
+    const res = await fetch(url, { headers: { 'X-Admin-Secret': SECRET } });
+    const subs = await res.json();
+
+    document.getElementById('subs-count').textContent = `${subs.length} subscriber${subs.length !== 1 ? 's' : ''}`;
+
+    if (!subs.length) {
+      container.innerHTML = '<div class="subs-empty">No subscribers yet.</div>';
+      return;
+    }
+
+    const rows = subs.map(s => `
+      <tr>
+        <td>${s.email}</td>
+        <td style="color:var(--muted);">${s.name || '—'}</td>
+        <td><span class="strategy-badge">${s.strategy || 'sp3'}</span></td>
+        <td>${s.subscribed_at ? s.subscribed_at.slice(0,10) : '—'}</td>
+        <td class="${s.is_active ? 'status-active' : 'status-inactive'}">${s.is_active ? 'Active' : 'Unsubscribed'}</td>
+      </tr>`).join('');
+
+    container.innerHTML = `
+      <table class="data-table">
+        <thead><tr><th>Email</th><th>Name</th><th>Strategy</th><th>Subscribed</th><th>Status</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
   } catch(e) {
-    el.className = 'err';
-    el.textContent = 'Request failed';
+    container.innerHTML = '<div class="subs-empty">Failed to load subscribers.</div>';
   }
 }
 
 async function addTestSubscriber() {
-  const email = document.getElementById('test-email').value.trim();
-  const el = document.getElementById('subscribe-result');
+  const email    = document.getElementById('test-email').value.trim();
+  const name     = document.getElementById('test-name').value.trim();
+  const strategy = document.getElementById('test-strategy').value;
+  const el       = document.getElementById('subscribe-result');
   if (!email) return;
   try {
     const res = await fetch('/sp3subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, name: name || null, strategy }),
     });
     const data = await res.json();
     el.style.color = res.ok ? '#1a6b3c' : '#b71c1c';
     el.textContent = data.message || data.detail;
     if (res.ok) {
       document.getElementById('test-email').value = '';
-      setTimeout(() => location.reload(), 1500);
+      document.getElementById('test-name').value = '';
+      setTimeout(() => loadSubscribers(null, document.querySelector('.tab.active')), 1000);
     }
-  } catch(e) {
-    el.style.color = '#b71c1c';
-    el.textContent = 'Request failed';
-  }
+  } catch(e) { el.style.color = '#b71c1c'; el.textContent = 'Request failed'; }
 }
+
+// Load all subscribers on page load
+document.addEventListener('DOMContentLoaded', () => loadSubscribers(null, document.querySelector('.tab')));
 </script>
 </body>
 </html>

@@ -29,6 +29,7 @@ templates = Jinja2Templates(directory=str(Path(__file__).parent.parent / "templa
 class SubscribeRequest(BaseModel):
     email: EmailStr
     name: Optional[str] = None
+    strategy: Optional[str] = "sp3"
 
 
 class SubscribeResponse(BaseModel):
@@ -62,6 +63,7 @@ def subscribe(payload: SubscribeRequest, db: Session = Depends(get_db)):
     sub = Subscriber(
         email=payload.email,
         name=payload.name,
+        strategy=payload.strategy or "sp3",
         unsubscribe_token=str(uuid.uuid4()),
     )
     db.add(sub)
@@ -91,13 +93,17 @@ def unsubscribe(token: str, db: Session = Depends(get_db)):
 # ─── Admin routes ─────────────────────────────────────────────────────────────
 
 @router.get("/subscribers", dependencies=[Depends(require_admin)])
-def list_subscribers(db: Session = Depends(get_db)):
-    subs = db.query(Subscriber).order_by(Subscriber.subscribed_at.desc()).all()
+def list_subscribers(strategy: Optional[str] = None, db: Session = Depends(get_db)):
+    q = db.query(Subscriber)
+    if strategy:
+        q = q.filter(Subscriber.strategy == strategy)
+    subs = q.order_by(Subscriber.subscribed_at.desc()).all()
     return [
         {
             "id": s.id,
             "email": s.email,
             "name": s.name,
+            "strategy": s.strategy,
             "subscribed_at": s.subscribed_at.isoformat() if s.subscribed_at else None,
             "is_active": s.is_active,
         }
@@ -166,6 +172,12 @@ def admin_dashboard(request: Request, secret: str = "", db: Session = Depends(ge
         )
 
     total = db.query(func.count(Subscriber.id)).filter(Subscriber.is_active == True).scalar() or 0
+    strategy_counts = dict(
+        db.query(Subscriber.strategy, func.count(Subscriber.id))
+        .filter(Subscriber.is_active == True)
+        .group_by(Subscriber.strategy)
+        .all()
+    )
     picks_history = (
         db.query(WeeklyPick)
         .order_by(WeeklyPick.week_date.desc(), WeeklyPick.rank)
@@ -184,6 +196,7 @@ def admin_dashboard(request: Request, secret: str = "", db: Session = Depends(ge
         {
             "request": request,
             "total_subscribers": total,
+            "strategy_counts": strategy_counts,
             "live_picks": live_picks,
             "picks_history": picks_history,
             "secret": secret,
