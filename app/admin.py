@@ -157,7 +157,7 @@ async def trigger_preview(payload: SendRequest = SendRequest(), db: Session = De
         html = generate_newsletter(picks=picks, week_date=date.today(), issue_number=issue_number)
         subject_picks = picks
 
-    ok = do_send_preview(ADMIN_EMAIL, html, date.today(), subject_picks)
+    ok = do_send_preview(ADMIN_EMAIL, html, date.today(), subject_picks, strategy=strategy)
     if not ok:
         raise HTTPException(status_code=500, detail="Preview send failed — check RESEND_API_KEY and ADMIN_EMAIL")
     return {"status": "ok", "message": f"{strategy.upper()} preview sent to {ADMIN_EMAIL}"}

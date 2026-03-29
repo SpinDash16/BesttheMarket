@@ -26,9 +26,11 @@ BATCH_SIZE = 50
 BATCH_DELAY = 1.0  # seconds between batches
 
 
-def _build_subject(picks: list[dict], week_date: date) -> str:
+def _build_subject(picks: list[dict], week_date: date, strategy: Optional[str] = None) -> str:
     tickers = " · ".join(p["ticker"] for p in picks[:3])
     date_str = week_date.strftime("%b %-d")
+    if strategy == "sf":
+        return f"The Silicon Fund: {tickers} — Week of {date_str}"
     return f"S&P 3 Weekly: {tickers} — Week of {date_str}"
 
 
@@ -38,8 +40,9 @@ def send_newsletter(
     html_content: str,
     week_date: date,
     picks: list[dict],
+    strategy: Optional[str] = None,
 ) -> bool:
-    subject = _build_subject(picks, week_date)
+    subject = _build_subject(picks, week_date, strategy)
     params = {
         "from": FROM_EMAIL,
         "to": [subscriber_email],
@@ -94,7 +97,7 @@ def send_to_all_subscribers(
                 f"https://sp3weekly.com/unsubscribe/{sub.unsubscribe_token}",
             )
             ok = send_newsletter(
-                sub.email, sub.name, personal_html, week_date, picks
+                sub.email, sub.name, personal_html, week_date, picks, strategy=strategy
             )
             if ok:
                 sent_count += 1
@@ -181,8 +184,8 @@ def send_pdf_to_subscribers(
     return {"sent": sent_count, "failed": failed_count, "errors": errors}
 
 
-def send_preview(admin_email: str, html_content: str, week_date: date, picks: list[dict]) -> bool:
-    subject = "[PREVIEW] " + _build_subject(picks, week_date)
+def send_preview(admin_email: str, html_content: str, week_date: date, picks: list[dict], strategy: Optional[str] = None) -> bool:
+    subject = "[PREVIEW] " + _build_subject(picks, week_date, strategy)
     params = {
         "from": FROM_EMAIL,
         "to": [admin_email],
