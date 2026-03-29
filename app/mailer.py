@@ -115,6 +115,72 @@ def send_to_all_subscribers(
     return {"sent": sent_count, "failed": failed_count, "errors": errors}
 
 
+def send_pdf_preview(admin_email: str, subject: str, filename: str, pdf_b64: str) -> bool:
+    """Send a PDF newsletter as an attachment preview to the admin."""
+    params = {
+        "from": FROM_EMAIL,
+        "to": [admin_email],
+        "subject": f"[PREVIEW] {subject}",
+        "html": f"<p>Preview of <strong>{filename}</strong>. See attached PDF.</p>",
+        "attachments": [{"filename": filename, "content": pdf_b64}],
+    }
+    if REPLY_TO:
+        params["reply_to"] = REPLY_TO
+    try:
+        resend.Emails.send(params)
+        logger.info(f"PDF preview sent to {admin_email}")
+        return True
+    except Exception as e:
+        logger.error(f"PDF preview send failed: {e}")
+        return False
+
+
+def send_pdf_to_subscribers(
+    db: Session,
+    subject: str,
+    filename: str,
+    pdf_b64: str,
+    strategy: Optional[str] = None,
+) -> dict:
+    """Send a PDF newsletter attachment to active subscribers."""
+    q = db.query(Subscriber).filter(Subscriber.is_active == True)
+    if strategy:
+        q = q.filter(Subscriber.strategy == strategy)
+    subscribers = q.all()
+
+    sent_count = 0
+    failed_count = 0
+    errors = []
+
+    for i in range(0, len(subscribers), BATCH_SIZE):
+        batch = subscribers[i : i + BATCH_SIZE]
+        for sub in batch:
+            params = {
+                "from": FROM_EMAIL,
+                "to": [sub.email],
+                "subject": subject,
+                "html": f"<p>This week's newsletter is attached as a PDF. See <strong>{filename}</strong>.</p>"
+                        f"<p style='font-size:12px;color:#999;'>"
+                        f"<a href='https://bestingthemarket.com/unsubscribe/{sub.unsubscribe_token}'>Unsubscribe</a></p>",
+                "attachments": [{"filename": filename, "content": pdf_b64}],
+            }
+            if REPLY_TO:
+                params["reply_to"] = REPLY_TO
+            try:
+                resend.Emails.send(params)
+                sent_count += 1
+                logger.info(f"PDF sent to {sub.email}")
+            except Exception as e:
+                failed_count += 1
+                errors.append(sub.email)
+                logger.error(f"PDF send failed for {sub.email}: {e}")
+
+        if i + BATCH_SIZE < len(subscribers):
+            time.sleep(BATCH_DELAY)
+
+    return {"sent": sent_count, "failed": failed_count, "errors": errors}
+
+
 def send_preview(admin_email: str, html_content: str, week_date: date, picks: list[dict]) -> bool:
     subject = "[PREVIEW] " + _build_subject(picks, week_date)
     params = {

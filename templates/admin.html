@@ -163,6 +163,40 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
     </div>
   </div>
 
+  <!-- PDF UPLOAD -->
+  <div class="card">
+    <div class="card-header"><h3>&#9632; &nbsp; Upload PDF Newsletter</h3></div>
+    <div class="card-body">
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;">
+        <div class="form-group" style="flex:1;min-width:200px;">
+          <label>Subject Line</label>
+          <input type="text" id="pdf-subject" placeholder="e.g. The Silicon Fund — Issue #5" style="width:100%;">
+        </div>
+        <div class="form-group" style="max-width:180px;">
+          <label>Send To</label>
+          <select id="pdf-strategy">
+            <option value="">All Strategies</option>
+            <option value="sp3">SP3 Only</option>
+            <option value="sf">Silicon Fund Only</option>
+            <option value="sp5">SP5 Only</option>
+            <option value="sp1">SP1 Only</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;">
+        <div class="form-group" style="flex:1;">
+          <label>PDF File</label>
+          <input type="file" id="pdf-file" accept=".pdf" style="width:100%;">
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-outline" onclick="sendPdfPreview()">Send Preview to Admin</button>
+        <button class="btn btn-gold" onclick="confirmPdfSend()">Send to Subscribers</button>
+      </div>
+      <div id="pdf-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:4px;font-family:'Courier New',monospace;font-size:12px;"></div>
+    </div>
+  </div>
+
   <!-- SUBSCRIBERS -->
   <div class="card">
     <div class="card-header">
@@ -329,6 +363,45 @@ async function loadSubscribers(strategy, tabEl) {
   } catch(e) {
     container.innerHTML = '<div class="subs-empty">Failed to load subscribers.</div>';
   }
+}
+
+async function sendPdfPreview() {
+  await _submitPdf(true);
+}
+
+function confirmPdfSend() {
+  const strategy = document.getElementById('pdf-strategy').value;
+  const label = strategy ? strategy.toUpperCase() : 'ALL strategies';
+  if (confirm(`Send this PDF newsletter to ${label} subscribers?`)) _submitPdf(false);
+}
+
+async function _submitPdf(previewOnly) {
+  const el = document.getElementById('pdf-result');
+  const file = document.getElementById('pdf-file').files[0];
+  const subject = document.getElementById('pdf-subject').value.trim();
+  const strategy = document.getElementById('pdf-strategy').value;
+
+  if (!file) { el.style.display='block'; el.className='err'; el.textContent='Please select a PDF file.'; return; }
+  if (!subject) { el.style.display='block'; el.className='err'; el.textContent='Please enter a subject line.'; return; }
+
+  el.style.display='block'; el.className=''; el.textContent = previewOnly ? 'Sending preview...' : 'Sending to subscribers...';
+
+  const form = new FormData();
+  form.append('file', file);
+  form.append('subject', subject);
+  form.append('strategy', strategy);
+  form.append('preview_only', previewOnly ? 'true' : 'false');
+
+  try {
+    const res = await fetch('/admin/send-pdf', {
+      method: 'POST',
+      headers: { 'X-Admin-Secret': SECRET },
+      body: form,
+    });
+    const data = await res.json();
+    el.className = res.ok ? 'ok' : 'err';
+    el.textContent = data.message || data.detail || 'Done';
+  } catch(e) { el.className = 'err'; el.textContent = 'Request failed'; }
 }
 
 async function addTestSubscriber() {

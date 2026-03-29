@@ -4,7 +4,7 @@ import uuid
 from datetime import date, datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request
+from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, EmailStr
@@ -183,6 +183,41 @@ async def admin_trigger_send(db: Session = Depends(get_db)):
     from .scheduler import weekly_send_job
     await weekly_send_job()
     return {"status": "ok", "message": "Weekly send job triggered manually"}
+
+
+@router.post("/admin/send-pdf", dependencies=[Depends(require_admin)])
+async def send_pdf_newsletter(
+    file: UploadFile = File(...),
+    subject: str = Form(...),
+    strategy: str = Form(""),
+    preview_only: str = Form("false"),
+    db: Session = Depends(get_db),
+):
+    """Send a PDF file as an email attachment to subscribers."""
+    import base64
+    from .mailer import send_pdf_to_subscribers, send_pdf_preview
+
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are accepted")
+
+    pdf_bytes = await file.read()
+    if len(pdf_bytes) > 10 * 1024 * 1024:  # 10 MB limit
+        raise HTTPException(status_code=400, detail="PDF must be under 10 MB")
+
+    pdf_b64 = base64.b64encode(pdf_bytes).decode()
+    filename = file.filename
+    strat = strategy.strip() or None
+    is_preview = preview_only.lower() == "true"
+
+    if is_preview:
+        ok = send_pdf_preview(ADMIN_EMAIL, subject, filename, pdf_b64)
+        if not ok:
+            raise HTTPException(status_code=500, detail="Preview send failed — check RESEND_API_KEY and ADMIN_EMAIL")
+        return {"status": "ok", "message": f"PDF preview sent to {ADMIN_EMAIL}"}
+
+    result = send_pdf_to_subscribers(db, subject, filename, pdf_b64, strategy=strat)
+    label = strat.upper() if strat else "all strategies"
+    return {"status": "ok", "message": f"Sent to {result['sent']} {label} subscribers ({result['failed']} failed)"}
 
 
 @router.get("/admin", response_class=HTMLResponse)
