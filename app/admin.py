@@ -137,18 +137,30 @@ def picks_history(db: Session = Depends(get_db)):
 
 
 @router.post("/send-preview", dependencies=[Depends(require_admin)])
-async def trigger_preview(db: Session = Depends(get_db)):
-    from .fetcher import get_top_n_sp500
-    from .newsletter import generate_newsletter
+async def trigger_preview(payload: SendRequest = SendRequest(), db: Session = Depends(get_db)):
     from .mailer import send_preview as do_send_preview
 
-    picks = get_top_n_sp500(n=3)
-    issue_number = get_issue_number(db)
-    html = generate_newsletter(picks=picks, week_date=date.today(), issue_number=issue_number)
-    ok = do_send_preview(ADMIN_EMAIL, html, date.today(), picks)
+    strategy = payload.strategy or "sp3"
+
+    if strategy == "sf":
+        from .sf_fetcher import get_silicon_fund_picks
+        from .sf_newsletter import generate_sf_newsletter
+        picks = get_silicon_fund_picks(n=5)
+        issue_number = get_issue_number(db)
+        html = generate_sf_newsletter(picks=picks, week_date=date.today(), issue_number=issue_number)
+        subject_picks = [{"ticker": p["ticker"], "rank": i+1} for i, p in enumerate(picks)]
+    else:
+        from .fetcher import get_top_n_sp500
+        from .newsletter import generate_newsletter
+        picks = get_top_n_sp500(n=3)
+        issue_number = get_issue_number(db)
+        html = generate_newsletter(picks=picks, week_date=date.today(), issue_number=issue_number)
+        subject_picks = picks
+
+    ok = do_send_preview(ADMIN_EMAIL, html, date.today(), subject_picks)
     if not ok:
         raise HTTPException(status_code=500, detail="Preview send failed — check RESEND_API_KEY and ADMIN_EMAIL")
-    return {"status": "ok", "message": f"Preview sent to {ADMIN_EMAIL}"}
+    return {"status": "ok", "message": f"{strategy.upper()} preview sent to {ADMIN_EMAIL}"}
 
 
 @router.post("/send-now", dependencies=[Depends(require_admin)])

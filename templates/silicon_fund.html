@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Silicon Fund — Besting the Market</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        #0a0a0f;
+      --ink-light:  #0f1a0f;
+      --paper:      #f5f3ee;
+      --cream:      #edeae3;
+      --gold:       #c9a84c;
+      --gold-hover: #9f7f48;
+      --green:      #4ade80;
+      --green-dim:  rgba(74, 222, 128, 0.12);
+      --muted:      #7a7870;
+      --border:     rgba(10, 10, 15, 0.12);
+      --border-dark: rgba(255,255,255,0.08);
+      --shadow:     0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg:  0 12px 48px rgba(0,0,0,0.2);
+      --radius:     6px;
+      --radius-lg:  10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { font-family: 'Syne', sans-serif; background: var(--ink); color: #f5f3ee; line-height: 1.6; }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--ink);
+      padding: 20px 0;
+      border-bottom: 2px solid var(--gold);
+    }
+    .header-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .logo-text { font-family: 'DM Serif Display', serif; font-size: 1.9rem; color: #fff; letter-spacing: -0.5px; }
+    .logo-text em { font-style: normal; color: var(--gold); }
+    .header-cta {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);
+      background: var(--green); border: none; padding: 10px 22px;
+      border-radius: var(--radius); cursor: pointer; text-decoration: none;
+      transition: background 0.2s; white-space: nowrap;
+    }
+    .header-cta:hover { background: #22c55e; }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--ink);
+      padding: 80px 32px 88px;
+      text-align: center;
+      position: relative;
+      border-bottom: 1px solid rgba(74,222,128,0.15);
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74,222,128,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.63rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--green);
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      color: #fff; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.5px;
+    }
+    .hero h1 em { font-style: normal; color: var(--gold); }
+    .hero-sub {
+      font-family: 'DM Mono', monospace; font-size: 0.88rem;
+      color: rgba(255,255,255,0.4); letter-spacing: 0.04em;
+      max-width: 540px; margin: 0 auto 40px; line-height: 1.8;
+    }
+    .btn-primary {
+      display: inline-block; background: var(--green); color: var(--ink);
+      font-family: 'DM Mono', monospace; font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+      padding: 14px 32px; border-radius: var(--radius);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #22c55e; transform: translateY(-1px); }
+
+    /* ── How It Works ── */
+    .how-section {
+      background: #0d0f14;
+      padding: 72px 32px;
+      border-top: 1px solid rgba(74,222,128,0.12);
+      border-bottom: 1px solid rgba(74,222,128,0.12);
+    }
+    .how-inner { max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.63rem; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--green);
+      margin-bottom: 16px; text-align: center;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem);
+      color: #fff; text-align: center; margin-bottom: 56px; line-height: 1.2;
+    }
+    .section-title em { font-style: normal; color: var(--gold); }
+    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .how-card {
+      background: #0a0a0f; border: 1px solid rgba(74,222,128,0.12);
+      border-radius: var(--radius-lg); padding: 28px;
+    }
+    .how-num {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem; font-weight: 500;
+      color: var(--green); background: var(--green-dim);
+      border: 1px solid rgba(74,222,128,0.2); border-radius: 4px;
+      padding: 4px 10px; letter-spacing: 0.08em; display: inline-block; margin-bottom: 16px;
+    }
+    .how-card h3 {
+      font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: #fff;
+      margin-bottom: 10px; line-height: 1.2;
+    }
+    .how-card p {
+      font-family: 'DM Mono', monospace; font-size: 0.74rem;
+      color: rgba(255,255,255,0.4); line-height: 1.75;
+    }
+
+    /* ── Sample Picks ── */
+    .picks-section {
+      background: var(--ink); padding: 72px 32px;
+    }
+    .picks-inner { max-width: 1100px; margin: 0 auto; }
+    .picks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; }
+    .pick-card {
+      background: #0d0f14; border: 1px solid rgba(74,222,128,0.1);
+      border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .pick-card-header {
+      background: #0a0a0f; padding: 16px 20px;
+      border-bottom: 1px solid rgba(74,222,128,0.1);
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .pick-ticker { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: #fff; }
+    .pick-change-pos { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--green); font-weight: 500; }
+    .pick-change-neg { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #f87171; font-weight: 500; }
+    .pick-card-body { padding: 16px 20px; }
+    .pick-name { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-bottom: 10px; letter-spacing: 0.04em; }
+    .pick-headline {
+      font-family: 'DM Mono', monospace; font-size: 0.7rem;
+      color: rgba(255,255,255,0.55); line-height: 1.6;
+      border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;
+      font-style: italic;
+    }
+    .pick-source { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--green); margin-top: 6px; letter-spacing: 0.06em; }
+
+    /* ── Subscribe ── */
+    .subscribe-section {
+      background: #0d0f14; padding: 80px 32px;
+      border-top: 1px solid rgba(74,222,128,0.15);
+    }
+    .subscribe-inner { max-width: 520px; margin: 0 auto; text-align: center; }
+    .subscribe-title { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4vw, 2.8rem); color: #fff; line-height: 1.15; margin-bottom: 12px; }
+    .subscribe-title em { font-style: normal; color: var(--gold); }
+    .subscribe-sub { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: rgba(255,255,255,0.4); line-height: 1.7; margin-bottom: 40px; letter-spacing: 0.02em; }
+    .form-wrap { background: #0a0a0f; border: 1px solid rgba(201,168,76,0.25); border-radius: var(--radius-lg); padding: 32px; text-align: left; box-shadow: var(--shadow-lg); }
+    .form-row { margin-bottom: 16px; }
+    .form-row label { display: block; font-family: 'DM Mono', monospace; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .form-row input { width: 100%; font-family: 'DM Mono', monospace; font-size: 0.88rem; border: 1px solid rgba(255,255,255,0.1); background: #141414; padding: 11px 14px; border-radius: var(--radius); color: #fff; outline: none; transition: border-color 0.15s; }
+    .form-row input:focus { border-color: var(--green); }
+    .btn-subscribe { width: 100%; background: var(--green); color: var(--ink); font-family: 'DM Mono', monospace; font-size: 0.76rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 14px; border: none; border-radius: var(--radius); cursor: pointer; transition: background 0.2s, transform 0.15s; margin-top: 4px; }
+    .btn-subscribe:hover { background: #22c55e; transform: translateY(-1px); }
+    .btn-subscribe:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .form-disclaimer { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.25); letter-spacing: 0.04em; margin-top: 16px; }
+    #form-message { font-family: 'DM Mono', monospace; font-size: 0.72rem; text-align: center; margin-top: 14px; padding: 10px 14px; border-radius: var(--radius); display: none; }
+    #form-message.success { background: rgba(74,222,128,0.1); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+    #form-message.error   { background: rgba(192,57,43,0.1); color: #f87171; border: 1px solid rgba(192,57,43,0.3); }
+
+    /* ── Footer ── */
+    .site-footer { background: var(--ink); padding: 32px; border-top: 1px solid var(--gold); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .footer-logo { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #fff; }
+    .footer-logo em { font-style: normal; color: var(--gold); }
+    .footer-meta { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: rgba(255,255,255,0.25); letter-spacing: 0.04em; text-align: right; line-height: 1.8; }
+    .footer-meta a { color: var(--gold); text-decoration: none; }
+
+    @media (max-width: 900px) { .how-grid, .picks-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) {
+      .hero, .how-section, .picks-section, .subscribe-section { padding-left: 20px; padding-right: 20px; }
+      .header-inner { padding: 0 20px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-meta { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" style="text-decoration:none;">
+        <span class="logo-text">Besting the <em>Market</em></span>
+      </a>
+      <a href="#subscribe" class="header-cta">Subscribe Free</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">&#9632; &nbsp; Weekly Tech Intelligence &nbsp; &#9632;</div>
+    <h1>The <em>Silicon</em> Fund.<br>Emerging tech, every Friday.</h1>
+    <p class="hero-sub">The emerging tech stocks making the biggest headlines each week — with news context and market insight. Delivered free, every Friday before market open.</p>
+    <a href="#subscribe" class="btn-primary">Get the Free Newsletter</a>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-section">
+    <div class="how-inner">
+      <div class="section-eyebrow">How It Works</div>
+      <h2 class="section-title">News-driven. <em>Human-curated.</em></h2>
+      <div class="how-grid">
+        <div class="how-card">
+          <span class="how-num">01</span>
+          <h3>Track the Headlines</h3>
+          <p>Every week we scan hundreds of financial news sources to identify which emerging tech companies are generating the most significant market attention.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-num">02</span>
+          <h3>Curate the Top Picks</h3>
+          <p>The 3–5 stocks with the highest news volume and market relevance this week are selected — from AI chips to quantum computing to clean energy tech.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-num">03</span>
+          <h3>Get the Insight</h3>
+          <p>Each pick comes with the top headline, a "why it matters" insight, current price, and weekly performance — everything you need in under 5 minutes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sample Picks -->
+  <section class="picks-section">
+    <div class="picks-inner">
+      <div class="section-eyebrow">Sample Newsletter</div>
+      <h2 class="section-title">This week's <em>picks</em> look like this</h2>
+      <div class="picks-grid">
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--green);letter-spacing:0.14em;margin-bottom:4px;">PICK #1 — 14 ARTICLES</div>
+              <div class="pick-ticker">NVDA</div>
+            </div>
+            <div class="pick-change-pos">+3.2%</div>
+          </div>
+          <div class="pick-card-body">
+            <div class="pick-name">Nvidia Corporation · $875.40</div>
+            <div class="pick-headline">"Nvidia Blackwell GPU shipments hit record levels as AI buildout accelerates"</div>
+            <div class="pick-source">Reuters</div>
+          </div>
+        </div>
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:#60a5fa;letter-spacing:0.14em;margin-bottom:4px;">PICK #2 — 9 ARTICLES</div>
+              <div class="pick-ticker">PLTR</div>
+            </div>
+            <div class="pick-change-pos">+5.1%</div>
+          </div>
+          <div class="pick-card-body">
+            <div class="pick-name">Palantir Technologies · $24.85</div>
+            <div class="pick-headline">"Palantir wins major US Army AI contract extension worth $400M"</div>
+            <div class="pick-source">Bloomberg</div>
+          </div>
+        </div>
+        <div class="pick-card">
+          <div class="pick-card-header">
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:#c084fc;letter-spacing:0.14em;margin-bottom:4px;">PICK #3 — 7 ARTICLES</div>
+              <div class="pick-ticker">CRWD</div>
+            </div>
+            <div class="pick-change-neg">-1.4%</div>
+          </div>
+          <div class="pick-card-body">
+            <div class="pick-name">CrowdStrike · $298.10</div>
+            <div class="pick-headline">"CrowdStrike Falcon platform gains 500 new enterprise customers in Q1"</div>
+            <div class="pick-source">CNBC</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subscribe -->
+  <section id="subscribe" class="subscribe-section">
+    <div class="subscribe-inner">
+      <div class="hero-eyebrow">&#9632; &nbsp; Free Newsletter &nbsp; &#9632;</div>
+      <h2 class="subscribe-title">Get the <em>Silicon Fund</em><br>every Friday.</h2>
+      <p class="subscribe-sub">Emerging tech picks + news insights. Free, every Friday before market open — no research required.</p>
+      <div class="form-wrap">
+        <form id="subscribeForm">
+          <div class="form-row">
+            <label>First name (optional)</label>
+            <input type="text" id="nameInput" name="name" placeholder="Derek" />
+          </div>
+          <div class="form-row">
+            <label>Email address *</label>
+            <input type="email" id="emailInput" name="email" placeholder="you@email.com" required />
+          </div>
+          <button type="submit" class="btn-subscribe">Get the Silicon Fund →</button>
+        </form>
+        <div id="form-message"></div>
+      </div>
+      <p class="form-disclaimer">Free. No spam. Unsubscribe any time. Not financial advice.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">Besting the <em>Market</em></div>
+      <div class="footer-meta">
+        <div>© 2026 Besting the Market &nbsp;·&nbsp; <a href="/">All Strategies</a></div>
+        <div>For informational purposes only. Not financial advice.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('subscribeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value.trim();
+      const name  = document.getElementById('nameInput').value.trim();
+      const msgEl = document.getElementById('form-message');
+      const btn   = this.querySelector('.btn-subscribe');
+
+      btn.textContent = 'Subscribing...';
+      btn.disabled = true;
+
+      try {
+        const res  = await fetch('/sp3subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name: name || null, strategy: 'sf' }),
+        });
+        const data = await res.json();
+        msgEl.style.display = 'block';
+        if (res.ok) {
+          msgEl.className = 'success';
+          msgEl.textContent = data.message;
+          document.getElementById('subscribeForm').reset();
+        } else {
+          msgEl.className = 'error';
+          msgEl.textContent = data.detail || 'Something went wrong. Try again.';
+        }
+      } catch (err) {
+        msgEl.style.display = 'block';
+        msgEl.className = 'error';
+        msgEl.textContent = 'Network error. Please try again.';
+      } finally {
+        btn.textContent = 'Get the Silicon Fund →';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

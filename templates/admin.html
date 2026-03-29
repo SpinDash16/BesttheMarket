@@ -151,6 +151,7 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
           <select id="send-strategy">
             <option value="">All Strategies</option>
             <option value="sp3">SP3 Only</option>
+            <option value="sf">Silicon Fund Only</option>
             <option value="sp5">SP5 Only</option>
             <option value="sp1">SP1 Only</option>
           </select>
@@ -173,9 +174,10 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
       <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
         <div class="tabs">
           <button class="tab active" onclick="loadSubscribers(null, this)">All <span class="tab-count" id="tab-count-all">{{ total_subscribers }}</span></button>
-          <button class="tab" onclick="loadSubscribers('sp3', this)">SP3 <span class="tab-count" id="tab-count-sp3">{{ strategy_counts.get('sp3', 0) }}</span></button>
-          <button class="tab" onclick="loadSubscribers('sp5', this)">SP5 <span class="tab-count" id="tab-count-sp5">{{ strategy_counts.get('sp5', 0) }}</span></button>
-          <button class="tab" onclick="loadSubscribers('sp1', this)">SP1 <span class="tab-count" id="tab-count-sp1">{{ strategy_counts.get('sp1', 0) }}</span></button>
+          <button class="tab" onclick="loadSubscribers('sp3', this)">SP3 <span class="tab-count">{{ strategy_counts.get('sp3', 0) }}</span></button>
+          <button class="tab" onclick="loadSubscribers('sf', this)">Silicon Fund <span class="tab-count">{{ strategy_counts.get('sf', 0) }}</span></button>
+          <button class="tab" onclick="loadSubscribers('sp5', this)">SP5 <span class="tab-count">{{ strategy_counts.get('sp5', 0) }}</span></button>
+          <button class="tab" onclick="loadSubscribers('sp1', this)">SP1 <span class="tab-count">{{ strategy_counts.get('sp1', 0) }}</span></button>
         </div>
       </div>
       <div id="subs-container">

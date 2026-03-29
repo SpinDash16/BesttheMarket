@@ -103,6 +103,30 @@ async def weekly_send_job():
         db.close()
 
 
+async def silicon_fund_send_job():
+    """Send the weekly Silicon Fund newsletter to SF subscribers."""
+    from .database import SessionLocal, get_issue_number
+    from .sf_fetcher import get_silicon_fund_picks
+    from .sf_newsletter import generate_sf_newsletter
+    from .mailer import send_to_all_subscribers
+
+    logger.info("=== Silicon Fund weekly send job starting ===")
+    db = SessionLocal()
+    today = date.today()
+
+    try:
+        picks = get_silicon_fund_picks(n=5)
+        logger.info(f"SF picks: {[p['ticker'] for p in picks]}")
+        issue_number = get_issue_number(db)
+        html = generate_sf_newsletter(picks=picks, week_date=today, issue_number=issue_number)
+        result = send_to_all_subscribers(db, html, today, picks, strategy="sf")
+        logger.info(f"SF send complete — sent: {result['sent']}, failed: {result['failed']}")
+    except Exception as e:
+        logger.exception(f"Unexpected error in silicon_fund_send_job: {e}")
+    finally:
+        db.close()
+
+
 async def daily_analytics_refresh_job():
     """Run daily analytics snapshot refresh (15-year backtest)."""
     from .database import SessionLocal
@@ -122,12 +146,21 @@ async def daily_analytics_refresh_job():
 def create_scheduler() -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler(timezone="America/New_York")
 
-    # Friday 6 AM: Weekly send job
+    # Friday 6 AM: S&P 3 send
     scheduler.add_job(
         weekly_send_job,
         CronTrigger(day_of_week="fri", hour=6, minute=0, timezone="America/New_York"),
         id="weekly_send",
         name="S&P 3 Weekly Friday Send",
+        replace_existing=True,
+    )
+
+    # Friday 6:05 AM: Silicon Fund send
+    scheduler.add_job(
+        silicon_fund_send_job,
+        CronTrigger(day_of_week="fri", hour=6, minute=5, timezone="America/New_York"),
+        id="silicon_fund_send",
+        name="Silicon Fund Friday Send",
         replace_existing=True,
     )
 

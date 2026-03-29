@@ -320,6 +320,12 @@ def sp3_page(request: Request):
     return templates.TemplateResponse("sp3.html", {"request": request})
 
 
+@app.get("/silicon-fund", response_class=HTMLResponse)
+def silicon_fund_page(request: Request):
+    """The Silicon Fund — emerging tech newsletter page."""
+    return templates.TemplateResponse("silicon_fund.html", {"request": request})
+
+
 @app.get("/", response_class=HTMLResponse)
 def home_page(request: Request):
     """Hub home page — strategy selector."""
