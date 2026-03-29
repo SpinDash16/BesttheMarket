@@ -326,6 +326,17 @@ def silicon_fund_page(request: Request):
     return templates.TemplateResponse("silicon_fund.html", {"request": request})
 
 
+@app.get("/preview/sf-newsletter", response_class=HTMLResponse)
+def preview_sf_newsletter():
+    """Preview the Silicon Fund newsletter with placeholder data."""
+    from datetime import date
+    from .sf_fetcher import _placeholder_picks
+    from .sf_newsletter import generate_sf_newsletter
+    picks = _placeholder_picks(3)
+    html = generate_sf_newsletter(picks=picks, week_date=date.today(), issue_number=1)
+    return HTMLResponse(html)
+
+
 @app.get("/", response_class=HTMLResponse)
 def home_page(request: Request):
     """Hub home page — strategy selector."""

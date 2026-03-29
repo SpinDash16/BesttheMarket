@@ -251,16 +251,19 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
 <script>
 const SECRET = '{{ secret }}';
 
-async function apiCall(url, method='POST') {
-  const res = await fetch(url, { method, headers: { 'X-Admin-Secret': SECRET } });
+async function apiCall(url, body=null, method='POST') {
+  const opts = { method, headers: { 'X-Admin-Secret': SECRET, 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
   return res;
 }
 
 async function sendPreview() {
   const el = document.getElementById('action-result');
+  const strategy = document.getElementById('send-strategy').value;
   el.style.display = 'block'; el.textContent = 'Sending preview...'; el.className = '';
   try {
-    const res = await apiCall('/send-preview');
+    const res = await apiCall('/send-preview', { strategy: strategy || null });
     const data = await res.json();
     el.className = res.ok ? 'ok' : 'err';
     el.textContent = data.message || data.detail || 'Done';

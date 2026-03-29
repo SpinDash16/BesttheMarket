@@ -12,7 +12,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0D0F14;">
 <tr><td align="center" style="padding:32px 16px;">
 
-<table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+<table width="520" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;width:100%;">
 
   <!-- TICKER TAPE -->
   <tr><td style="background:#0A0A0F;padding:8px 0;overflow:hidden;white-space:nowrap;border-bottom:1px solid #1a2a1a;">
@@ -25,11 +25,11 @@
   <tr><td style="background:#0A0A0F;padding:28px 32px 24px;border-bottom:2px solid #C9A84C;">
     <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#4ade80;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;">&#9632; &nbsp; Weekly Tech Intelligence &nbsp; &#9632;</div>
     <div style="font-family:Georgia,serif;font-size:38px;font-weight:bold;color:#F5F3EE;letter-spacing:-0.02em;line-height:1;margin-bottom:6px;">The <span style="color:#C9A84C;">Silicon</span><br>Fund</div>
-    <div style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#7A7870;letter-spacing:0.05em;margin-top:8px;">Emerging tech stocks making headlines — curated weekly for investors</div>
+    <div style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#C8C6C0;letter-spacing:0.05em;margin-top:8px;">Emerging tech stocks making headlines — curated weekly for investors</div>
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
       <tr>
         <td><div style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#C9A84C;letter-spacing:0.1em;text-transform:uppercase;">Week of {{ week_date }}</div></td>
-        <td align="right"><div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#444;">Issue No. {{ "%03d"|format(issue_number) }}</div></td>
+        <td align="right"><div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#9a9890;">Issue No. {{ "%03d"|format(issue_number) }}</div></td>
       </tr>
     </table>
   </td></tr>
@@ -44,7 +44,7 @@
 
   <!-- INTRO -->
   <tr><td style="background:#0f1a0f;padding:20px 32px 16px;border-bottom:1px solid #1a2a1a;">
-    <p style="font-family:Georgia,serif;font-size:14px;color:#a0b89a;line-height:1.65;margin:0;">
+    <p style="font-family:Georgia,serif;font-size:14px;color:#D0CEC8;line-height:1.65;margin:0;">
       Every week The Silicon Fund tracks the emerging tech companies generating the most market attention. This week's picks — <strong style="color:#F5F3EE;">{% for p in picks %}{% if not loop.first %}{% if loop.last %} and {% else %}, {% endif %}{% endif %}{{ p.ticker }}{% endfor %}</strong> — are the stocks at the intersection of technology and today's biggest headlines.
     </p>
   </td></tr>
@@ -62,15 +62,15 @@
           <td width="55%" valign="top">
             <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:{{ accent }};letter-spacing:0.18em;text-transform:uppercase;margin-bottom:4px;">&#9632; Pick #{{ loop.index }} — {{ pick.news_count }} articles this week</div>
             <div style="font-family:Georgia,serif;font-size:34px;font-weight:bold;color:#F5F3EE;letter-spacing:-0.02em;line-height:1;">{{ pick.ticker }}</div>
-            <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#7A7870;margin-top:3px;letter-spacing:0.04em;">{{ pick.name }}</div>
+            <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#C8C6C0;margin-top:3px;letter-spacing:0.04em;">{{ pick.name }}</div>
           </td>
           <td valign="top" align="right">
-            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#7A7870;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Current Price</div>
+            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#C8C6C0;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Current Price</div>
             <div style="font-family:Georgia,serif;font-size:24px;font-weight:bold;color:#F5F3EE;line-height:1;">{{ pick.price_display }}</div>
             <div style="font-family:'Courier New',Courier,monospace;font-size:12px;color:{% if pick.pct_positive %}#4ade80{% else %}#f87171{% endif %};margin-top:4px;font-weight:bold;">
               {{ pick.pct_display }}
             </div>
-            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#444;margin-top:2px;">vs. prev close</div>
+            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#9a9890;margin-top:2px;">vs. prev close</div>
           </td>
         </tr>
       </table>
@@ -82,7 +82,7 @@
       </div>
 
       <!-- Insight -->
-      <div style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#7A7870;line-height:1.7;border-top:1px solid #1a1a20;padding-top:12px;">
+      <div style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#C8C6C0;line-height:1.7;border-top:1px solid #1a1a20;padding-top:12px;">
         <span style="color:{{ accent }};">WHY IT MATTERS — </span>{{ pick.insight }}
       </div>
 
@@ -94,22 +94,22 @@
   <!-- STRATEGY BOX -->
   <tr><td style="background:#0f1a0f;padding:20px 32px;border-top:2px solid #C9A84C;">
     <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#4ade80;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">&#9632; &nbsp; The Silicon Fund Strategy</div>
-    <div style="font-family:Georgia,serif;font-size:13px;color:#7A7870;line-height:1.65;">
+    <div style="font-family:Georgia,serif;font-size:13px;color:#C8C6C0;line-height:1.65;">
       Each week The Silicon Fund identifies <strong style="color:#C9A84C;">emerging tech stocks generating the most significant market attention</strong> — measured by news volume, recency, and market relevance. These are not predictions. They are a curated lens on where capital and attention are flowing in the technology sector. Invest responsibly. Dollar-cost average where appropriate.
     </div>
     <div style="margin-top:14px;">
-      <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#444;letter-spacing:0.06em;">Next issue: &nbsp;<span style="color:#C9A84C;">FRI, {{ next_friday|upper }}</span></div>
+      <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#9a9890;letter-spacing:0.06em;">Next issue: &nbsp;<span style="color:#C9A84C;">FRI, {{ next_friday|upper }}</span></div>
     </div>
   </td></tr>
 
   <!-- FOOTER -->
   <tr><td style="background:#0A0A0F;border-top:1px solid #1A1A20;padding:20px 32px;">
     <div style="font-family:Georgia,serif;font-size:16px;font-weight:bold;color:#F5F3EE;margin-bottom:4px;">The <span style="color:#C9A84C;">Silicon</span> Fund</div>
-    <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#444;margin-bottom:12px;">by Besting the Market</div>
+    <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#9a9890;margin-bottom:12px;">by Besting the Market</div>
     <div style="margin-bottom:12px;">
-      <a href="{{ unsubscribe_url }}" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#7A7870;letter-spacing:0.08em;text-decoration:none;">Unsubscribe</a>
+      <a href="{{ unsubscribe_url }}" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#C8C6C0;letter-spacing:0.08em;text-decoration:none;">Unsubscribe</a>
     </div>
-    <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#333;line-height:1.6;letter-spacing:0.02em;">
+    <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#888880;line-height:1.6;letter-spacing:0.02em;">
       The Silicon Fund is an independent publication. Stock data and news sourced from public markets and financial news providers. This newsletter is for informational purposes only and does not constitute financial advice. Past performance does not guarantee future results. Always conduct your own research before making investment decisions.<br><br>
       &copy; 2026 Besting the Market &nbsp;·&nbsp; Published every Friday
     </div>
