@@ -143,11 +143,20 @@ h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-
 
   <!-- ACTIONS -->
   <div class="card">
-    <div class="card-header"><h3>&#9632; &nbsp; Actions</h3></div>
+    <div class="card-header"><h3>&#9632; &nbsp; Send Newsletter</h3></div>
     <div class="card-body">
-      <div class="actions">
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;">
+        <div class="form-group" style="max-width:180px;">
+          <label>Strategy</label>
+          <select id="send-strategy">
+            <option value="">All Strategies</option>
+            <option value="sp3">SP3 Only</option>
+            <option value="sp5">SP5 Only</option>
+            <option value="sp1">SP1 Only</option>
+          </select>
+        </div>
         <button class="btn btn-outline" onclick="sendPreview()">Send Preview to Admin</button>
-        <button class="btn btn-gold" onclick="if(confirm('Send to ALL active SP3 subscribers?')) sendNow()">Send to All SP3 Subscribers</button>
+        <button class="btn btn-gold" onclick="confirmSend()">Send Newsletter</button>
       </div>
       <div id="action-result"></div>
     </div>
@@ -256,11 +265,22 @@ async function sendPreview() {
   } catch(e) { el.className = 'err'; el.textContent = 'Request failed'; }
 }
 
-async function sendNow() {
+function confirmSend() {
+  const strategy = document.getElementById('send-strategy').value;
+  const label = strategy ? strategy.toUpperCase() : 'ALL strategies';
+  if (confirm(`Send newsletter to ${label} subscribers?`)) sendNow(strategy);
+}
+
+async function sendNow(strategy) {
   const el = document.getElementById('action-result');
-  el.style.display = 'block'; el.textContent = 'Sending to all subscribers...'; el.className = '';
+  const label = strategy ? strategy.toUpperCase() : 'all strategies';
+  el.style.display = 'block'; el.textContent = `Sending to ${label} subscribers...`; el.className = '';
   try {
-    const res = await apiCall('/send-now');
+    const res = await fetch('/send-now', {
+      method: 'POST',
+      headers: { 'X-Admin-Secret': SECRET, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ strategy: strategy || null }),
+    });
     const data = await res.json();
     el.className = res.ok ? 'ok' : 'err';
     el.textContent = data.message || data.detail || 'Done';

@@ -26,6 +26,10 @@ templates = Jinja2Templates(directory=str(Path(__file__).parent.parent / "templa
 
 # ─── Pydantic schemas ────────────────────────────────────────────────────────
 
+class SendRequest(BaseModel):
+    strategy: Optional[str] = None  # None = send to all strategies
+
+
 class SubscribeRequest(BaseModel):
     email: EmailStr
     name: Optional[str] = None
@@ -148,10 +152,18 @@ async def trigger_preview(db: Session = Depends(get_db)):
 
 
 @router.post("/send-now", dependencies=[Depends(require_admin)])
-async def trigger_send(db: Session = Depends(get_db)):
-    from .scheduler import weekly_send_job
-    await weekly_send_job()
-    return {"status": "ok", "message": "Send job triggered"}
+async def trigger_send(payload: SendRequest = SendRequest(), db: Session = Depends(get_db)):
+    from .fetcher import get_top_n_sp500
+    from .newsletter import generate_newsletter
+    from .mailer import send_to_all_subscribers
+    from .database import WeeklyPick, get_issue_number
+
+    picks = get_top_n_sp500(n=3)
+    issue_number = get_issue_number(db)
+    html = generate_newsletter(picks=picks, week_date=date.today(), issue_number=issue_number)
+    result = send_to_all_subscribers(db, html, date.today(), picks, strategy=payload.strategy)
+    label = payload.strategy.upper() if payload.strategy else "all strategies"
+    return {"status": "ok", "message": f"Sent {result['sent']} emails to {label} subscribers ({result['failed']} failed)"}
 
 
 @router.post("/admin/trigger-send", dependencies=[Depends(require_admin)])

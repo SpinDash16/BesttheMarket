@@ -71,9 +71,13 @@ def send_to_all_subscribers(
     html_template: str,
     week_date: date,
     picks: list[dict],
+    strategy: Optional[str] = None,
 ) -> dict:
-    """Send personalized newsletters to all active subscribers in batches."""
-    subscribers = db.query(Subscriber).filter(Subscriber.is_active == True).all()
+    """Send personalized newsletters to active subscribers, optionally filtered by strategy."""
+    q = db.query(Subscriber).filter(Subscriber.is_active == True)
+    if strategy:
+        q = q.filter(Subscriber.strategy == strategy)
+    subscribers = q.all()
 
     sent_count = 0
     failed_count = 0
