@@ -23,7 +23,7 @@
 
   <!-- MASTHEAD -->
   <tr><td style="background:#ffffff;padding:28px 32px 24px;border-bottom:2px solid #C9A84C;">
-    <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#16a34a;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;">&#9632; &nbsp; Weekly Tech Intelligence &nbsp; &#9632;</div>
+    <div style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#1a5c2e;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;">&#9632; &nbsp; Weekly Tech Intelligence &nbsp; &#9632;</div>
     <div style="font-family:Georgia,serif;font-size:38px;font-weight:bold;color:#0a0a0f;letter-spacing:-0.02em;line-height:1;margin-bottom:6px;">The <span style="color:#C9A84C;">Silicon</span><br>Fund</div>
     <div style="font-family:'Courier New',Courier,monospace;font-size:11px;color:#555552;letter-spacing:0.05em;margin-top:8px;">Emerging tech stocks making headlines — curated weekly for investors</div>
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
@@ -35,11 +35,11 @@
   </td></tr>
 
   <!-- RULE -->
-  <tr><td style="height:3px;background:linear-gradient(90deg,#C9A84C,#16a34a);"></td></tr>
+  <tr><td style="height:3px;background:linear-gradient(90deg,#C9A84C,#1a5c2e);"></td></tr>
 
   <!-- SECTION LABEL -->
   <tr><td style="background:#f0f7f0;padding:6px 32px;border-bottom:1px solid #c8e6c8;">
-    <span style="font-family:'Courier New',Courier,monospace;font-size:10px;font-weight:bold;color:#16a34a;letter-spacing:0.18em;text-transform:uppercase;">&#9632; &nbsp; This Week's Headline Picks &nbsp; &#9632;</span>
+    <span style="font-family:'Courier New',Courier,monospace;font-size:10px;font-weight:bold;color:#1a5c2e;letter-spacing:0.18em;text-transform:uppercase;">&#9632; &nbsp; This Week's Headline Picks &nbsp; &#9632;</span>
   </td></tr>
 
   <!-- INTRO -->
@@ -51,7 +51,7 @@
 
   <!-- PICKS -->
   {% for pick in picks %}
-  {% set accent = "#C9A84C" if loop.index == 1 else ("#16a34a" if loop.index == 2 else "#2563eb") %}
+  {% set accent = "#C9A84C" if loop.index == 1 else ("#1a5c2e" if loop.index == 2 else "#2563eb") %}
 
   <tr><td style="background:#ffffff;padding:0;">
     <div style="padding:22px 32px;border-left:4px solid {{ accent }};border-bottom:1px solid #e8e8e8;">
@@ -67,7 +67,7 @@
           <td valign="top" align="right">
             <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#777774;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Current Price</div>
             <div style="font-family:Georgia,serif;font-size:24px;font-weight:bold;color:#0a0a0f;line-height:1;">{{ pick.price_display }}</div>
-            <div style="font-family:'Courier New',Courier,monospace;font-size:12px;color:{% if pick.pct_positive %}#16a34a{% else %}#dc2626{% endif %};margin-top:4px;font-weight:bold;">
+            <div style="font-family:'Courier New',Courier,monospace;font-size:12px;color:{% if pick.pct_positive %}#1a5c2e{% else %}#dc2626{% endif %};margin-top:4px;font-weight:bold;">
               {{ pick.pct_display }}
             </div>
             <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#aaaaaa;margin-top:2px;">vs. prev close</div>
@@ -77,7 +77,7 @@
 
       <!-- Headline box -->
       <div style="background:#f0f7f0;border:1px solid #c8e6c8;padding:12px 16px;margin-bottom:12px;">
-        <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#16a34a;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:5px;">&#9632; &nbsp; Top Headline — {{ pick.source }}</div>
+        <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#1a5c2e;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:5px;">&#9632; &nbsp; Top Headline — {{ pick.source }}</div>
         <div style="font-family:Georgia,serif;font-size:13px;color:#1a1a1a;line-height:1.5;font-style:italic;">"{{ pick.headline }}"</div>
       </div>
 
@@ -93,7 +93,7 @@
 
   <!-- STRATEGY BOX -->
   <tr><td style="background:#f0f7f0;padding:20px 32px;border-top:2px solid #C9A84C;">
-    <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#16a34a;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">&#9632; &nbsp; The Silicon Fund Strategy</div>
+    <div style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#1a5c2e;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">&#9632; &nbsp; The Silicon Fund Strategy</div>
     <div style="font-family:Georgia,serif;font-size:13px;color:#333330;line-height:1.65;">
       Each week The Silicon Fund identifies <strong style="color:#C9A84C;">emerging tech stocks generating the most significant market attention</strong> — measured by news volume, recency, and market relevance. These are not predictions. They are a curated lens on where capital and attention are flowing in the technology sector. Invest responsibly. Dollar-cost average where appropriate.
     </div>
