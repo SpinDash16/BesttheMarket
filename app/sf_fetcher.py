@@ -2,6 +2,7 @@
 from __future__ import annotations
 import logging
 import time
+from datetime import datetime, timezone
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -88,13 +89,37 @@ def get_silicon_fund_picks(n: int = 5) -> list[dict]:
             news = t.news or []
             info = t.fast_info
 
-            recent = [a for a in news if a.get("providerPublishTime", 0) > one_week_ago]
+            def _pub_time(article: dict) -> float:
+                # New yfinance format: nested under "content" with ISO pubDate
+                content = article.get("content", {})
+                if content:
+                    pub = content.get("pubDate", "")
+                    if pub:
+                        try:
+                            return datetime.fromisoformat(pub.replace("Z", "+00:00")).timestamp()
+                        except Exception:
+                            pass
+                # Old yfinance format: top-level providerPublishTime (unix timestamp)
+                return article.get("providerPublishTime", 0)
+
+            def _title(article: dict) -> str:
+                content = article.get("content", {})
+                return content.get("title", "") or article.get("title", "")
+
+            def _publisher(article: dict) -> str:
+                content = article.get("content", {})
+                return (content.get("provider") or {}).get("displayName", "") or article.get("publisher", "")
+
+            def _url(article: dict) -> str:
+                content = article.get("content", {})
+                return (content.get("canonicalUrl") or {}).get("url", "") or article.get("link", "")
+
+            recent = [a for a in news if _pub_time(a) > one_week_ago]
             if not recent:
                 continue
 
-            # Score = articles in last 7 days, weighted by recency
             score = sum(
-                1 + (a.get("providerPublishTime", 0) - one_week_ago) / (7 * 24 * 3600)
+                1 + (_pub_time(a) - one_week_ago) / (7 * 24 * 3600)
                 for a in recent
             )
 
@@ -113,17 +138,21 @@ def get_silicon_fund_picks(n: int = 5) -> list[dict]:
                 "pct_positive":  pct is not None and pct >= 0,
                 "news_count":    len(recent),
                 "score":         score,
-                "headline":      top.get("title", ""),
+                "headline":      _title(top),
                 "insight":       _INSIGHTS.get(ticker, f"{default_name} is generating significant market attention this week."),
-                "source":        top.get("publisher", ""),
-                "news_url":      top.get("link", ""),
+                "source":        _publisher(top),
+                "news_url":      _url(top),
             })
         except Exception as e:
             logger.warning(f"sf_fetcher: failed on {ticker}: {e}")
             continue
 
     scored.sort(key=lambda x: x["score"], reverse=True)
-    return scored[:n]
+    result = scored[:n]
+    if not result:
+        logger.warning("sf_fetcher: no live picks found, falling back to placeholders")
+        return _placeholder_picks(n)
+    return result
 
 
 def _placeholder_picks(n: int) -> list[dict]:
