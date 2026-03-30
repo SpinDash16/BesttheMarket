@@ -67,21 +67,36 @@ def get_upcoming_earnings(weeks_ahead: int = 6) -> list[dict]:
     for ticker, default_name in EARNINGS_UNIVERSE:
         try:
             t = yf.Ticker(ticker)
-            cal = t.calendar or {}
-            dates = cal.get("Earnings Date", [])
-            if not dates:
+
+            # earnings_dates returns a DataFrame indexed by datetime with upcoming rows first
+            ed = t.earnings_dates
+            if ed is None or ed.empty:
                 continue
 
-            # Grab the nearest upcoming date
-            upcoming = [d for d in dates if isinstance(d, date) and today <= d <= cutoff]
+            # Normalize index to date objects
+            upcoming = []
+            for idx in ed.index:
+                try:
+                    d = idx.date() if hasattr(idx, "date") else idx
+                    if today <= d <= cutoff:
+                        upcoming.append((d, ed.loc[idx]))
+                except Exception:
+                    continue
+
             if not upcoming:
                 continue
 
-            earnings_date = min(upcoming)
+            earnings_date, row = min(upcoming, key=lambda x: x[0])
             days_away = (earnings_date - today).days
 
             info = t.fast_info
             name = getattr(info, "short_name", None) or default_name
+
+            eps_est = row.get("EPS Estimate") if hasattr(row, "get") else getattr(row, "EPS Estimate", None)
+            try:
+                eps_est = round(float(eps_est), 2) if eps_est is not None and str(eps_est) != "nan" else None
+            except Exception:
+                eps_est = None
 
             results.append({
                 "ticker":            ticker,
@@ -89,10 +104,10 @@ def get_upcoming_earnings(weeks_ahead: int = 6) -> list[dict]:
                 "earnings_date":     earnings_date.isoformat(),
                 "earnings_date_fmt": earnings_date.strftime("%b %-d, %Y"),
                 "weekday":           earnings_date.strftime("%A"),
-                "eps_estimate":      round(cal.get("Earnings Average", 0), 2) if cal.get("Earnings Average") else None,
-                "eps_high":          round(cal.get("Earnings High", 0), 2) if cal.get("Earnings High") else None,
-                "eps_low":           round(cal.get("Earnings Low", 0), 2) if cal.get("Earnings Low") else None,
-                "revenue_estimate":  cal.get("Revenue Average"),
+                "eps_estimate":      eps_est,
+                "eps_high":          None,
+                "eps_low":           None,
+                "revenue_estimate":  None,
                 "days_away":         days_away,
             })
         except Exception as e:
