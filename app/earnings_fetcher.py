@@ -96,10 +96,12 @@ def get_upcoming_earnings(weeks_ahead: int = 6) -> list[dict]:
                 "days_away":         days_away,
             })
         except Exception as e:
-            logger.warning(f"earnings_fetcher: failed on {ticker}: {e}")
+            logger.warning(f"earnings_fetcher: failed on {ticker}: {type(e).__name__}: {e}")
             continue
 
     results.sort(key=lambda x: x["earnings_date"])
+    if not results:
+        logger.error("earnings_fetcher: returned 0 results — possible IP block or API change")
     return results
 
 
