@@ -337,6 +337,22 @@ def preview_sf_newsletter():
     return HTMLResponse(html)
 
 
+@app.get("/tools/earnings", response_class=HTMLResponse)
+def earnings_page(request: Request):
+    """Earnings calendar tool — upcoming earnings for our universe."""
+    return templates.TemplateResponse("earnings.html", {"request": request})
+
+
+@app.get("/api/earnings")
+def api_earnings(weeks: int = 6):
+    """Return upcoming earnings data as JSON."""
+    from .earnings_fetcher import get_upcoming_earnings, _fmt_revenue
+    picks = get_upcoming_earnings(weeks_ahead=min(weeks, 12))
+    for p in picks:
+        p["revenue_fmt"] = _fmt_revenue(p.get("revenue_estimate"))
+    return picks
+
+
 @app.get("/", response_class=HTMLResponse)
 def home_page(request: Request):
     """Hub home page — strategy selector."""
